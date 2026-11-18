@@ -1994,8 +1994,8 @@
 
         transform-origin: center center;
         will-change: transform, width;
-        transition: transform 0.45s cubic-bezier(0.25, 1.4, 0.45, 1),
-                    width 0.35s cubic-bezier(0.25, 1.4, 0.45, 1),
+        transition: transform 0.42s cubic-bezier(0.25, 1.4, 0.45, 1),
+                    width 0.32s cubic-bezier(0.25, 1.4, 0.45, 1),
                     box-shadow 0.2s ease,
                     filter 0.2s ease;
       }
@@ -4503,6 +4503,10 @@
       let itemMetrics = [];
       let rAF = null;
 
+      // Variables for high-performance programmatic smooth scrolling
+      let scrollAnimRAF = null;
+      let isProgrammaticScrolling = false;
+
       const sectionMap = [
         { id: 'hero', name: 'hero' },
         { id: 'about', name: 'about' },
@@ -4519,32 +4523,88 @@
         return window.innerWidth <= 768 || window.matchMedia('(max-width: 768px)').matches;
       }
 
-      // Smooth scroll helper that works flawlessly on iOS & Android
-      function scrollToSection(secId) {
+      // High-performance RAF smooth-scroll animator that CANNOT be aborted by mobile touch events
+      function smoothScrollTo(targetY, duration) {
+        if (typeof duration === 'undefined') duration = 380;
+        if (scrollAnimRAF) {
+          cancelAnimationFrame(scrollAnimRAF);
+          scrollAnimRAF = null;
+        }
+
+        const startY = window.pageYOffset || document.documentElement.scrollTop;
+        const distance = targetY - startY;
+
+        if (Math.abs(distance) < 3) {
+          window.scrollTo(0, targetY);
+          return;
+        }
+
+        isProgrammaticScrolling = true;
+        const startTime = performance.now();
+
+        function step(now) {
+          const elapsed = now - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          
+          // Easing cubic easeInOut
+          const ease = progress < 0.5
+            ? 4 * progress * progress * progress
+            : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+          const currentY = startY + (distance * ease);
+          window.scrollTo(0, currentY);
+
+          if (progress < 1) {
+            scrollAnimRAF = requestAnimationFrame(step);
+          } else {
+            scrollAnimRAF = null;
+            setTimeout(function () {
+              isProgrammaticScrolling = false;
+            }, 60);
+          }
+        }
+
+        scrollAnimRAF = requestAnimationFrame(step);
+      }
+
+      // Smooth scroll to a target section
+      function scrollToSection(secId, duration) {
         if (!secId) return;
         const targetEl = document.getElementById(secId);
         if (!targetEl) return;
         
         const rect = targetEl.getBoundingClientRect();
         const scrollY = window.pageYOffset || document.documentElement.scrollTop;
-        const targetY = rect.top + scrollY - 24;
+        const docHeight = document.documentElement.scrollHeight;
+        const vh = window.innerHeight;
+        const maxScroll = Math.max(0, docHeight - vh);
 
-        window.scrollTo({
-          top: Math.max(0, targetY),
-          behavior: 'smooth'
-        });
+        let targetY = rect.top + scrollY - 24;
+
+        if (secId === 'hero') {
+          targetY = 0;
+        } else if (secId === 'contact') {
+          targetY = maxScroll;
+        } else {
+          targetY = Math.max(0, Math.min(maxScroll, targetY));
+        }
+
+        smoothScrollTo(targetY, duration);
       }
 
       // Ukur seluruh metrik item SATU KALI saat touchstart agar touchmove 100% bebas layout thrashing
       function updateItemMetrics() {
         const dockRect = dock.getBoundingClientRect();
+        const dockPaddingLeft = dockRect.left + (dock.clientLeft || 0);
+
         itemMetrics = mobItems.map(function (item, index) {
           const rect = item.getBoundingClientRect();
-          const left = rect.left - dockRect.left;
+          const left = rect.left - dockPaddingLeft;
           const width = rect.width;
           return {
             index: index,
             element: item,
+            secId: item.getAttribute('data-section'),
             left: left,
             width: width,
             center: left + (width / 2)
@@ -4562,12 +4622,13 @@
         if (!animate) {
           pill.style.transition = 'none';
         } else {
-          pill.style.transition = 'transform 0.45s cubic-bezier(0.25, 1.4, 0.45, 1), width 0.35s cubic-bezier(0.25, 1.4, 0.45, 1), box-shadow 0.2s ease, filter 0.2s ease';
+          pill.style.transition = 'transform 0.42s cubic-bezier(0.25, 1.4, 0.45, 1), width 0.32s cubic-bezier(0.25, 1.4, 0.45, 1), box-shadow 0.2s ease, filter 0.2s ease';
         }
 
         const dockRect = dock.getBoundingClientRect();
+        const dockPaddingLeft = dockRect.left + (dock.clientLeft || 0);
         const itemRect = item.getBoundingClientRect();
-        const left = itemRect.left - dockRect.left;
+        const left = itemRect.left - dockPaddingLeft;
         const width = itemRect.width;
 
         if (width > 0) {
@@ -4593,7 +4654,7 @@
         return { x: e.clientX, y: e.clientY };
       }
 
-      // --- 1-TO-1 REAL-TIME FINGER TRACKING DENGAN KINETIC DELTA ---
+      // --- 1-TO-1 REAL-TIME FINGER TRACKING + REAL-TIME AUTO SCROLL WHILE DRAGGING ---
       function onTouchStart(e) {
         const pt = getTouchCoord(e);
         startTouchX = pt.x;
@@ -4626,7 +4687,7 @@
         const deltaX = pt.x - startTouchX;
         const deltaY = pt.y - startTouchY;
 
-        if (Math.abs(deltaX) > 3 || Math.abs(deltaY) > 3) {
+        if (Math.abs(deltaX) > 2 || Math.abs(deltaY) > 2) {
           hasMoved = true;
         }
 
@@ -4646,10 +4707,10 @@
 
         if (targetX < minX) {
           const over = minX - targetX;
-          targetX = minX - (over * 0.26); // Resistansi pegas karet
+          targetX = minX - (over * 0.28); // Resistansi pegas karet
         } else if (targetX > maxX) {
           const over = targetX - maxX;
-          targetX = maxX + (over * 0.26); // Resistansi pegas karet
+          targetX = maxX + (over * 0.28); // Resistansi pegas karet
         }
 
         currentTranslateX = targetX;
@@ -4670,15 +4731,20 @@
         // Dinamisasi lebar kapsul sesuai target item
         currentPillWidth = closest.width;
 
-        // Ubah state visual menu yang sedang dilintasi jari
+        // KETIKA JARI MENGGESER MELINTASI ITEM: OTOMATIS MENYEKROLL HALAMAN LANGSUNG REAL-TIME!
         if (closest.element !== currentTargetItem) {
           currentTargetItem = closest.element;
           mobItems.forEach(function (it) {
             it.classList.toggle('active', it === closest.element);
           });
+
+          // Pemicu Scroll Real-time Saat Jari Masih Menggeser (Tanpa Perlu Lepas Jari!)
+          const secId = currentTargetItem.getAttribute('data-section');
+          scrollToSection(secId, 420);
+
           // Umpan balik haptic mikro
           if (navigator.vibrate) {
-            try { navigator.vibrate(6); } catch (err) {}
+            try { navigator.vibrate(8); } catch (err) {}
           }
         }
 
@@ -4694,7 +4760,7 @@
 
         // Efek regangan cairan kaca (Liquid Glass Stretch)
         const deltaX = currentTranslateX - startPillLeft;
-        const stretchX = Math.min(1.10, 1.04 + Math.abs(deltaX) * 0.0006);
+        const stretchX = Math.min(1.08, 1.03 + Math.abs(deltaX) * 0.0005);
 
         pill.style.width = currentPillWidth + 'px';
         pill.style.transform = 'translate3d(' + currentTranslateX + 'px, 0, 0) scaleX(' + stretchX + ') scaleY(1.02)';
@@ -4712,17 +4778,15 @@
         pill.classList.remove('is-dragging');
 
         // Kembalikan animasi pegas lembut elastis khas iOS
-        pill.style.transition = 'transform 0.45s cubic-bezier(0.25, 1.4, 0.45, 1), width 0.35s cubic-bezier(0.25, 1.4, 0.45, 1), box-shadow 0.2s ease, filter 0.2s ease';
+        pill.style.transition = 'transform 0.42s cubic-bezier(0.25, 1.4, 0.45, 1), width 0.32s cubic-bezier(0.25, 1.4, 0.45, 1), box-shadow 0.2s ease, filter 0.2s ease';
 
         if (currentTargetItem) {
           snapToItem(currentTargetItem, true);
 
-          // Jika terjadi gesture geser, picu navigasi ke section tujuan
-          if (hasMoved) {
-            const secId = currentTargetItem.getAttribute('data-section');
-            scrollToSection(secId);
-            if (typeof playAudio === 'function') playAudio('click');
-          }
+          // Pastikan scroll menuju section tujuan
+          const secId = currentTargetItem.getAttribute('data-section');
+          scrollToSection(secId, 360);
+          if (typeof playAudio === 'function') playAudio('click');
         }
       }
 
@@ -4730,7 +4794,7 @@
       const hasTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
       if (hasTouch) {
-        // Mode Perangkat Sentuh (Mobile): Hanya gunakan Touch Events murni
+        // Mode Perangkat Sentuh (Mobile): Gunakan Touch Events murni
         dock.addEventListener('touchstart', onTouchStart, { passive: false });
         window.addEventListener('touchmove', onTouchMove, { passive: false });
         window.addEventListener('touchend', onTouchEnd, { passive: false });
@@ -4770,13 +4834,13 @@
           if (typeof playAudio === 'function') playAudio('click');
           snapToItem(this, true);
           const secId = this.getAttribute('data-section');
-          scrollToSection(secId);
+          scrollToSection(secId, 450);
         });
       });
 
-      // --- SINKRONISASI SCROLL OTOMATIS (SCROLL SPY) ---
+      // --- SINKRONISASI SCROLL OTOMATIS (SCROLL SPY KETIKA USER MEN-SCROLL LAYAR MANUAL) ---
       function updateActivePillFromScroll() {
-        if (isDragging || !isMobile()) return;
+        if (isDragging || isProgrammaticScrolling || !isMobile()) return;
 
         const scrollY = window.pageYOffset || document.documentElement.scrollTop;
         const viewportHeight = window.innerHeight;
