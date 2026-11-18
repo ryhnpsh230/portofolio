@@ -2181,23 +2181,23 @@
       <!-- Specular Highlight Floating Liquid Pill Indicator -->
       <div class="nav-mob-pill" id="navMobPill"></div>
 
-      <a href="#hero" class="nav-mob-item active" data-section="hero" title="Beranda">
+      <a href="#hero" class="nav-mob-item active" data-section="hero" title="Beranda" onclick="return false;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         <span>Beranda</span>
       </a>
-      <a href="#about" class="nav-mob-item" data-section="about" title="Tentang Saya">
+      <a href="#about" class="nav-mob-item" data-section="about" title="Tentang Saya" onclick="return false;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         <span>Tentang</span>
       </a>
-      <a href="#projects" class="nav-mob-item" data-section="projects" title="Proyek Pilihan">
+      <a href="#projects" class="nav-mob-item" data-section="projects" title="Proyek Pilihan" onclick="return false;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
         <span>Proyek</span>
       </a>
-      <a href="#education" class="nav-mob-item" data-section="education" title="Pendidikan & Sertifikasi">
+      <a href="#education" class="nav-mob-item" data-section="education" title="Pendidikan & Sertifikasi" onclick="return false;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
         <span>Sertifikat</span>
       </a>
-      <a href="#contact" class="nav-mob-item" data-section="contact" title="Hubungi Saya">
+      <a href="#contact" class="nav-mob-item" data-section="contact" title="Hubungi Saya" onclick="return false;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.5L3 20l1.1-5.4A8.5 8.5 0 1 1 21 11.5z"/><path d="M8.5 10.5c0 3 2.5 5.5 5.5 5.5"/></svg>
         <span>Kontak</span>
       </a>
@@ -4491,6 +4491,7 @@
       if (!dock || !pill || !mobItems.length) return;
 
       let isDragging = false;
+      let isSwipeDrag = false;
       let hasMoved = false;
       let startTouchX = 0;
       let startTouchY = 0;
@@ -4500,6 +4501,9 @@
       let currentPillWidth = 54;
       let currentActiveItem = mobItems[0];
       let currentTargetItem = mobItems[0];
+
+      // Kunci target menu aktif: MENCEGAH PILL KEMBALI KE BERANDA SAAT DILEPAS!
+      let userNavTarget = null;
       let itemMetrics = [];
       let rAF = null;
 
@@ -4524,8 +4528,8 @@
       }
 
       // High-performance RAF smooth-scroll animator that CANNOT be aborted by mobile touch events
+      // Uses luxurious easeOutQuart curve for brisk responsive start and velvet-soft landing
       function smoothScrollTo(targetY, duration) {
-        if (typeof duration === 'undefined') duration = 380;
         if (scrollAnimRAF) {
           cancelAnimationFrame(scrollAnimRAF);
           scrollAnimRAF = null;
@@ -4534,9 +4538,14 @@
         const startY = window.pageYOffset || document.documentElement.scrollTop;
         const distance = targetY - startY;
 
-        if (Math.abs(distance) < 3) {
+        if (Math.abs(distance) < 2) {
           window.scrollTo(0, targetY);
           return;
+        }
+
+        if (typeof duration === 'undefined') {
+          const absDist = Math.abs(distance);
+          duration = Math.min(620, Math.max(380, Math.round(absDist * 0.16)));
         }
 
         isProgrammaticScrolling = true;
@@ -4546,10 +4555,8 @@
           const elapsed = now - startTime;
           const progress = Math.min(elapsed / duration, 1);
           
-          // Easing cubic easeInOut
-          const ease = progress < 0.5
-            ? 4 * progress * progress * progress
-            : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+          // Easing easeOutQuart (1 - (1-t)^4) - sangat lembut, responsif dan tidak kaku
+          const ease = 1 - Math.pow(1 - progress, 4);
 
           const currentY = startY + (distance * ease);
           window.scrollTo(0, currentY);
@@ -4558,9 +4565,11 @@
             scrollAnimRAF = requestAnimationFrame(step);
           } else {
             scrollAnimRAF = null;
+            window.scrollTo(0, targetY);
             setTimeout(function () {
               isProgrammaticScrolling = false;
-            }, 60);
+              userNavTarget = null; // Buka kunci Scroll Spy hanya setelah scroll selesai sempurna!
+            }, 120);
           }
         }
 
@@ -4661,6 +4670,7 @@
         startTouchY = pt.y;
         hasMoved = false;
         isDragging = true;
+        isSwipeDrag = false;
 
         // Ukur posisi awal tanpa jeda
         updateItemMetrics();
@@ -4675,6 +4685,7 @@
         currentTranslateX = startPillLeft;
         currentPillWidth = startPillWidth;
         currentTargetItem = activeMetric.element;
+        userNavTarget = activeMetric.element;
 
         // Matikan transisi agar gerak 100% instan mengikuti ujung jari
         pill.style.transition = 'none';
@@ -4689,6 +4700,7 @@
 
         if (Math.abs(deltaX) > 2 || Math.abs(deltaY) > 2) {
           hasMoved = true;
+          isSwipeDrag = true;
         }
 
         // Cegah default scroll layar saat menggeser dock
@@ -4734,13 +4746,15 @@
         // KETIKA JARI MENGGESER MELINTASI ITEM: OTOMATIS MENYEKROLL HALAMAN LANGSUNG REAL-TIME!
         if (closest.element !== currentTargetItem) {
           currentTargetItem = closest.element;
+          userNavTarget = closest.element; // Kunci target agar pill TIDAK kembali ke beranda!
+
           mobItems.forEach(function (it) {
             it.classList.toggle('active', it === closest.element);
           });
 
-          // Pemicu Scroll Real-time Saat Jari Masih Menggeser (Tanpa Perlu Lepas Jari!)
+          // Pemicu Scroll Real-time Saat Jari Masih Menggeser
           const secId = currentTargetItem.getAttribute('data-section');
-          scrollToSection(secId, 420);
+          scrollToSection(secId, 450);
 
           // Umpan balik haptic mikro
           if (navigator.vibrate) {
@@ -4769,6 +4783,7 @@
       function onTouchEnd(e) {
         if (!isDragging) return;
         isDragging = false;
+        isSwipeDrag = hasMoved;
 
         if (rAF) {
           cancelAnimationFrame(rAF);
@@ -4781,13 +4796,21 @@
         pill.style.transition = 'transform 0.42s cubic-bezier(0.25, 1.4, 0.45, 1), width 0.32s cubic-bezier(0.25, 1.4, 0.45, 1), box-shadow 0.2s ease, filter 0.2s ease';
 
         if (currentTargetItem) {
+          // KUNCI TARGET: Glass pill TETAP berada di halaman yang dituju!
+          // Tidak boleh ada lompatan ke beranda!
+          userNavTarget = currentTargetItem;
           snapToItem(currentTargetItem, true);
 
-          // Pastikan scroll menuju section tujuan
+          // Lanjutkan auto scroll mulus ke section yang dituju
           const secId = currentTargetItem.getAttribute('data-section');
-          scrollToSection(secId, 360);
+          scrollToSection(secId, 480);
           if (typeof playAudio === 'function') playAudio('click');
         }
+
+        // Reset flag swipe drag setelah event synthetic click terlewati
+        setTimeout(function () {
+          isSwipeDrag = false;
+        }, 300);
       }
 
       // Deteksi Touch Device secara Presisi (Mencegah Eksekusi Event Ganda Touch & Pointer)
@@ -4820,10 +4843,10 @@
 
       // Cegah klik ganda jika baru saja selesai menggeser (swipe)
       dock.addEventListener('click', function (e) {
-        if (hasMoved) {
+        if (isSwipeDrag || hasMoved) {
           e.preventDefault();
           e.stopPropagation();
-          hasMoved = false;
+          return false;
         }
       }, true);
 
@@ -4831,16 +4854,34 @@
       mobItems.forEach(function (item) {
         item.addEventListener('click', function (e) {
           e.preventDefault();
+          if (isSwipeDrag) return false;
+
+          currentTargetItem = this;
+          userNavTarget = this; // Kunci target agar pill tidak bergerak liar!
           if (typeof playAudio === 'function') playAudio('click');
           snapToItem(this, true);
           const secId = this.getAttribute('data-section');
-          scrollToSection(secId, 450);
+          scrollToSection(secId, 500);
         });
       });
 
+      // Deteksi Sentuhan Manual Pada Layar Konten: Lepas Kunci Navbar Jika User Men-scroll Artikel Manual
+      window.addEventListener('touchstart', function (e) {
+        if (!dock.contains(e.target)) {
+          // User menyentuh konten halaman untuk membaca: batalkan lock navbar
+          userNavTarget = null;
+          isProgrammaticScrolling = false;
+          if (scrollAnimRAF) {
+            cancelAnimationFrame(scrollAnimRAF);
+            scrollAnimRAF = null;
+          }
+        }
+      }, { passive: true });
+
       // --- SINKRONISASI SCROLL OTOMATIS (SCROLL SPY KETIKA USER MEN-SCROLL LAYAR MANUAL) ---
       function updateActivePillFromScroll() {
-        if (isDragging || isProgrammaticScrolling || !isMobile()) return;
+        // JIKA USER SEDANG MEN-DRAG ATAU SEDANG AUTO-SCROLL ATAU TARGET DIKUNCI: JANGAN GANGGU PILL!
+        if (isDragging || isProgrammaticScrolling || userNavTarget || !isMobile()) return;
 
         const scrollY = window.pageYOffset || document.documentElement.scrollTop;
         const viewportHeight = window.innerHeight;
