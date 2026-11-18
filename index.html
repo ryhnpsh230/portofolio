@@ -12,271 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <!-- External Libraries: Three.js 3D Engine, VanillaTilt & Lucide Icons -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
-
-    // ================= MOBILE BOTTOM NAVBAR: LIQUID GLASS PILL & TOUCH SWIPE GESTURE =================
-    (function () {
-      const dock = document.getElementById('navMobileDock');
-      const pill = document.getElementById('navMobPill');
-      const mobItems = document.querySelectorAll('.nav-mob-item');
-      if (!dock || !pill || !mobItems.length) return;
-
-      let isDragging = false;
-      let hasMoved = false;
-      let startX = 0;
-      let currentActiveItem = mobItems[0];
-
-      const sectionMap = [
-        { id: 'hero', name: 'hero' },
-        { id: 'about', name: 'about' },
-        { id: 'experience', name: 'about' },
-        { id: 'projects', name: 'projects' },
-        { id: 'why', name: 'projects' },
-        { id: 'education', name: 'education' },
-        { id: 'skills', name: 'education' },
-        { id: 'soft-skills', name: 'education' },
-        { id: 'contact', name: 'contact' }
-      ];
-
-      function isMobile() {
-        return window.innerWidth <= 768;
-      }
-
-      // Kunci (Snap) Kapsul Kaca ke Item Menu dengan Animasi Pegas Lembut (Spring Transition)
-      function snapToItem(item, animate = true) {
-        if (!item || !pill) return;
-        currentActiveItem = item;
-
-        if (!animate) {
-          pill.style.transition = 'none';
-        } else {
-          pill.style.transition = 'transform 0.42s cubic-bezier(0.34, 1.45, 0.64, 1), width 0.35s cubic-bezier(0.34, 1.45, 0.64, 1), box-shadow 0.25s ease, filter 0.25s ease';
-        }
-
-        const left = item.offsetLeft;
-        const width = item.offsetWidth;
-
-        pill.style.width = width + 'px';
-        pill.style.transform = 'translateX(' + left + 'px) scale(1)';
-
-        mobItems.forEach(it => {
-          if (it === item) {
-            it.classList.add('active');
-          } else {
-            it.classList.remove('active');
-          }
-        });
-      }
-
-      // Cari Item Menu Terdekat Berdasarkan Posisi Horizontal Jari
-      function getClosestItem(x) {
-        let closest = currentActiveItem;
-        let minDiff = Infinity;
-        mobItems.forEach(item => {
-          const center = item.offsetLeft + item.offsetWidth / 2;
-          const diff = Math.abs(x - center);
-          if (diff < minDiff) {
-            minDiff = diff;
-            closest = item;
-          }
-        });
-        return closest;
-      }
-
-      // --- REAL-TIME FINGER TRACKING (touchstart, touchmove, touchend) ---
-      function handleTouchStart(e) {
-        if (!isMobile()) return;
-        const touch = e.touches ? e.touches[0] : e;
-        isDragging = true;
-        hasMoved = false;
-        startX = touch.clientX;
-
-        pill.classList.add('is-dragging');
-        pill.style.transition = 'box-shadow 0.2s ease, filter 0.2s ease';
-
-        updateDragPosition(touch.clientX);
-      }
-
-      function handleTouchMove(e) {
-        if (!isDragging || !isMobile()) return;
-        const touch = e.touches ? e.touches[0] : e;
-
-        if (Math.abs(touch.clientX - startX) > 4) {
-          hasMoved = true;
-        }
-
-        // Nonaktifkan default scroll browser pada area navbar saat digeser
-        if (e.cancelable) {
-          e.preventDefault();
-        }
-
-        updateDragPosition(touch.clientX);
-      }
-
-      function updateDragPosition(clientX) {
-        const dockRect = dock.getBoundingClientRect();
-        const fingerX = clientX - dockRect.left;
-        const pillWidth = currentActiveItem ? currentActiveItem.offsetWidth : 52;
-
-        // Pusatkan kapsul kaca di bawah posisi jari
-        const targetLeft = fingerX - (pillWidth / 2);
-        const minLeft = 4;
-        const maxLeft = dock.clientWidth - pillWidth - 4;
-        const clampedLeft = Math.max(minLeft, Math.min(maxLeft, targetLeft));
-
-        // Ikuti jari secara real-time dengan efek membesar (scale up 1.08x)
-        pill.style.transition = 'none';
-        pill.style.transform = 'translateX(' + clampedLeft + 'px) scale(1.08)';
-
-        // Sorot item terdekat di bawah jari secara real-time
-        const closest = getClosestItem(fingerX);
-        if (closest && closest !== currentActiveItem) {
-          currentActiveItem = closest;
-          mobItems.forEach(it => {
-            if (it === closest) {
-              it.classList.add('active');
-            } else {
-              it.classList.remove('active');
-            }
-          });
-          // Umpan balik getar haptic mikro jika didukung perangkat
-          if (navigator.vibrate) {
-            try { navigator.vibrate(8); } catch (err) {}
-          }
-        }
-      }
-
-      function handleTouchEnd(e) {
-        if (!isDragging) return;
-        isDragging = false;
-        pill.classList.remove('is-dragging');
-
-        // Kembalikan animasi pegas lembut
-        pill.style.transition = 'transform 0.42s cubic-bezier(0.34, 1.45, 0.64, 1), width 0.35s cubic-bezier(0.34, 1.45, 0.64, 1), box-shadow 0.25s ease, filter 0.25s ease';
-
-        if (currentActiveItem) {
-          snapToItem(currentActiveItem, true);
-
-          // Jika terjadi gesture geser, picu navigasi ke section tujuan
-          if (hasMoved) {
-            const secId = currentActiveItem.getAttribute('data-section');
-            const targetEl = document.getElementById(secId);
-            if (targetEl) {
-              targetEl.scrollIntoView({ behavior: 'smooth' });
-            }
-            playAudio('click');
-          }
-        }
-      }
-
-      // Daftarkan Touch Event Listeners Khusus Mobile
-      dock.addEventListener('touchstart', handleTouchStart, { passive: false });
-      window.addEventListener('touchmove', handleTouchMove, { passive: false });
-      window.addEventListener('touchend', handleTouchEnd, { passive: false });
-      window.addEventListener('touchcancel', handleTouchEnd, { passive: false });
-
-      // Dukungan Drag Mouse untuk Pengujian DevTools Mobile Mode
-      dock.addEventListener('mousedown', function (e) {
-        if (!isMobile()) return;
-        handleTouchStart(e);
-
-        function onMouseMove(ev) {
-          handleTouchMove(ev);
-        }
-        function onMouseUp(ev) {
-          window.removeEventListener('mousemove', onMouseMove);
-          window.removeEventListener('mouseup', onMouseUp);
-          handleTouchEnd(ev);
-        }
-        window.addEventListener('mousemove', onMouseMove);
-        window.addEventListener('mouseup', onMouseUp);
-      });
-
-      // Cegah klik ganda jika baru saja selesai menggeser (swipe)
-      dock.addEventListener('click', function (e) {
-        if (hasMoved) {
-          e.preventDefault();
-          e.stopPropagation();
-          hasMoved = false;
-        }
-      }, true);
-
-      // Sinkronisasi Klik/Tap Biasa pada Menu
-      mobItems.forEach(item => {
-        item.addEventListener('click', function (e) {
-          playAudio('click');
-          snapToItem(this, true);
-        });
-      });
-
-      // --- SINKRONISASI SCROLL OTOMATIS (SCROLL SPY) ---
-      function updateActivePillFromScroll() {
-        if (isDragging || !isMobile()) return;
-
-        const scrollY = window.scrollY;
-        const viewportHeight = window.innerHeight;
-        const docHeight = document.documentElement.scrollHeight;
-
-        // Jika mendekati bagian paling bawah halaman, kunci 'contact'
-        if (scrollY + viewportHeight >= docHeight - 140) {
-          const contactItem = document.querySelector('.nav-mob-item[data-section="contact"]');
-          if (contactItem && currentActiveItem !== contactItem) {
-            snapToItem(contactItem, true);
-          }
-          return;
-        }
-
-        // Jika berada di paling atas, kunci 'hero'
-        if (scrollY < 240) {
-          const heroItem = document.querySelector('.nav-mob-item[data-section="hero"]');
-          if (heroItem && currentActiveItem !== heroItem) {
-            snapToItem(heroItem, true);
-          }
-          return;
-        }
-
-        let activeSection = 'hero';
-        for (let i = 0; i < sectionMap.length; i++) {
-          const el = document.getElementById(sectionMap[i].id);
-          if (el) {
-            const top = el.offsetTop - 180;
-            if (scrollY >= top) {
-              activeSection = sectionMap[i].name;
-            }
-          }
-        }
-
-        const targetItem = document.querySelector('.nav-mob-item[data-section="' + activeSection + '"]');
-        if (targetItem && currentActiveItem !== targetItem) {
-          snapToItem(targetItem, true);
-        }
-      }
-
-      window.addEventListener('scroll', updateActivePillFromScroll, { passive: true });
-
-      // Sinkronisasi ulang saat rotasi layar atau perubahan ukuran jendela
-      window.addEventListener('resize', function () {
-        if (isMobile() && currentActiveItem) {
-          snapToItem(currentActiveItem, false);
-        }
-      });
-
-      // Penyelarasan Posisi Awal saat Halaman Selesai Dimuat
-      function initPill() {
-        if (!isMobile()) return;
-        const activeItem = document.querySelector('.nav-mob-item.active') || mobItems[0];
-        snapToItem(activeItem, false);
-      }
-
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initPill);
-      } else {
-        initPill();
-      }
-      setTimeout(initPill, 150);
-    })();
-
-  </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -2172,6 +1908,7 @@
         right: 18px;
         width: 44px;
         height: 44px;
+        z-index: 89;
         box-shadow: 0 8px 24px rgba(37, 211, 102, 0.4);
       }
       .to-top {
@@ -2179,6 +1916,7 @@
         right: 72px; /* Sejajar rapi di samping tombol WhatsApp */
         width: 44px;
         height: 44px;
+        z-index: 89;
       }
 
       /* Sembunyikan Nav Desktop di Layar HP */
@@ -2191,6 +1929,7 @@
         position: fixed;
         top: auto;
         bottom: 16px;
+        bottom: max(16px, env(safe-area-inset-bottom, 16px));
         left: 50%;
         transform: translateX(-50%);
         width: auto;
@@ -2199,7 +1938,7 @@
         border: none;
         padding: 0;
         margin: 0;
-        z-index: 85;
+        z-index: 95;
         pointer-events: none;
         backdrop-filter: none;
         -webkit-backdrop-filter: none;
@@ -2213,8 +1952,8 @@
         gap: 3px;
         padding: 5px 8px;
         border-radius: 9999px;
-        pointer-events: auto;
-        touch-action: none; /* Nonaktifkan default scroll browser saat digeser */
+        pointer-events: auto !important;
+        touch-action: none !important; /* Nonaktifkan default scroll browser saat digeser */
 
         /* Material Liquid Glass Tinted */
         background: rgba(21, 43, 38, 0.20);
@@ -2224,10 +1963,10 @@
         border: 1px solid rgba(255, 255, 255, 0.25);
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.20), 0 2px 10px rgba(21, 43, 38, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.4);
 
-        user-select: none;
-        -webkit-user-select: none;
-        -webkit-touch-callout: none;
-        -webkit-tap-highlight-color: transparent;
+        user-select: none !important;
+        -webkit-user-select: none !important;
+        -webkit-touch-callout: none !important;
+        -webkit-tap-highlight-color: transparent !important;
         animation: navPillFloatIn .35s cubic-bezier(0.16, 1, 0.3, 1);
       }
 
@@ -2243,8 +1982,9 @@
         bottom: 5px;
         left: 0;
         width: 52px;
+        min-width: 44px;
         border-radius: 9999px;
-        pointer-events: none;
+        pointer-events: none !important;
         z-index: 1;
 
         /* Deep Botanical Emerald Glass Liquid Pill */
@@ -2296,11 +2036,17 @@
         text-decoration: none;
         cursor: pointer;
         min-width: 52px;
-        user-select: none;
-        -webkit-user-select: none;
-        -webkit-touch-callout: none;
-        -webkit-tap-highlight-color: transparent;
+        pointer-events: auto !important;
+        touch-action: none !important;
+        user-select: none !important;
+        -webkit-user-select: none !important;
+        -webkit-touch-callout: none !important;
+        -webkit-tap-highlight-color: transparent !important;
         transition: color .2s ease;
+      }
+
+      .nav-mob-item * {
+        pointer-events: none !important;
       }
 
       .nav-mob-item svg {
@@ -2308,7 +2054,6 @@
         height: 18px;
         transition: transform .25s cubic-bezier(0.34, 1.45, 0.64, 1), color .2s ease;
         color: rgba(21, 43, 38, 0.72);
-        pointer-events: none;
       }
 
       .nav-mob-item span {
@@ -2319,7 +2064,6 @@
         line-height: 1.1;
         transition: color .2s ease;
         color: rgba(21, 43, 38, 0.72);
-        pointer-events: none;
       }
 
       /* State Menyala (Active Pill) pada Teks & Ikon saat Aktif */
@@ -4363,6 +4107,8 @@
       });
     }
   
+
+    /* ---------- CERTIFICATE DATA & CONSOLE LOGIC ---------- */
     // ================= CERTIFICATE & CREDENTIAL SHOWCASE ENGINE (12 CREDENTIALS) =================
     const certDetails = {
       'kemnaker-integrity': {
@@ -4733,6 +4479,326 @@
       <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 14.99 3.8 13.47 3.8 11.91C3.81 7.37 7.5 3.67 12.05 3.67M9.11 7.43C8.94 7.43 8.68 7.5 8.44 7.76C8.21 8.02 7.56 8.63 7.56 9.87C7.56 11.12 8.47 12.32 8.6 12.5C8.73 12.67 10.4 15.25 12.96 16.35C13.57 16.61 14.04 16.77 14.41 16.89C15.02 17.08 15.58 17.05 16.02 16.99C16.51 16.92 17.54 16.37 17.75 15.77C17.97 15.16 17.97 14.65 17.9 14.54C17.84 14.43 17.67 14.37 17.41 14.24C17.15 14.11 15.89 13.49 15.65 13.4C15.42 13.31 15.25 13.27 15.08 13.53C14.91 13.79 14.42 14.37 14.27 14.54C14.12 14.71 13.97 14.73 13.71 14.6C13.45 14.47 12.62 14.2 11.63 13.32C10.86 12.63 10.34 11.78 10.19 11.52C10.04 11.26 10.17 11.13 10.3 11C10.42 10.88 10.56 10.7 10.7 10.54C10.83 10.37 10.87 10.24 10.96 10.07C11.05 9.9 11 9.75 10.94 9.62C10.87 9.5 10.36 8.24 10.15 7.73C9.94 7.23 9.73 7.3 9.58 7.29C9.43 7.29 9.26 7.29 9.11 7.29V7.43Z"/>
     </svg>
   </a>
+
+
+
+  <!-- ================= MOBILE LIQUID GLASS BOTTOM NAVBAR TOUCH GESTURE SCRIPT ================= -->
+  <script id="mobileNavGestureScript">
+    (function () {
+      const dock = document.getElementById('navMobileDock');
+      const pill = document.getElementById('navMobPill');
+      const mobItems = document.querySelectorAll('.nav-mob-item');
+      if (!dock || !pill || !mobItems.length) return;
+
+      let isDragging = false;
+      let hasMoved = false;
+      let startX = 0;
+      let startY = 0;
+      let dockRect = null;
+      let currentActiveItem = mobItems[0];
+
+      const sectionMap = [
+        { id: 'hero', name: 'hero' },
+        { id: 'about', name: 'about' },
+        { id: 'experience', name: 'about' },
+        { id: 'projects', name: 'projects' },
+        { id: 'why', name: 'projects' },
+        { id: 'education', name: 'education' },
+        { id: 'skills', name: 'education' },
+        { id: 'soft-skills', name: 'education' },
+        { id: 'contact', name: 'contact' }
+      ];
+
+      function isMobile() {
+        return window.innerWidth <= 768 || window.matchMedia('(max-width: 768px)').matches;
+      }
+
+      // Smooth scroll helper that works flawlessly on iOS & Android
+      function scrollToSection(secId) {
+        if (!secId) return;
+        const targetEl = document.getElementById(secId);
+        if (!targetEl) return;
+        
+        const rect = targetEl.getBoundingClientRect();
+        const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+        const targetY = rect.top + scrollY - 24;
+
+        window.scrollTo({
+          top: Math.max(0, targetY),
+          behavior: 'smooth'
+        });
+      }
+
+      // Kunci (Snap) Kapsul Kaca ke Item Menu dengan Animasi Pegas Lembut (Spring Transition)
+      function snapToItem(item, animate) {
+        if (!item || !pill) return;
+        if (typeof animate === 'undefined') animate = true;
+        currentActiveItem = item;
+
+        if (!animate) {
+          pill.style.transition = 'none';
+        } else {
+          pill.style.transition = 'transform 0.42s cubic-bezier(0.34, 1.45, 0.64, 1), width 0.35s cubic-bezier(0.34, 1.45, 0.64, 1), box-shadow 0.25s ease, filter 0.25s ease';
+        }
+
+        const left = item.offsetLeft;
+        const width = item.offsetWidth;
+
+        if (width > 0) {
+          pill.style.width = width + 'px';
+        }
+        pill.style.transform = 'translateX(' + left + 'px) scale(1)';
+        pill.style.opacity = '1';
+
+        mobItems.forEach(function (it) {
+          if (it === item) {
+            it.classList.add('active');
+          } else {
+            it.classList.remove('active');
+          }
+        });
+      }
+
+      // Cari Item Menu Terdekat Berdasarkan Posisi Horizontal Jari
+      function getClosestItem(x) {
+        let closest = currentActiveItem;
+        let minDiff = Infinity;
+        mobItems.forEach(function (item) {
+          const center = item.offsetLeft + item.offsetWidth / 2;
+          const diff = Math.abs(x - center);
+          if (diff < minDiff) {
+            minDiff = diff;
+            closest = item;
+          }
+        });
+        return closest;
+      }
+
+      function getTouchCoord(e) {
+        if (e.touches && e.touches.length > 0) {
+          return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        }
+        if (e.changedTouches && e.changedTouches.length > 0) {
+          return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+        }
+        return { x: e.clientX, y: e.clientY };
+      }
+
+      function updateDragPosition(clientX) {
+        if (!dockRect) dockRect = dock.getBoundingClientRect();
+        const fingerX = clientX - dockRect.left;
+        const pillWidth = currentActiveItem ? currentActiveItem.offsetWidth : 52;
+
+        // Pusatkan kapsul kaca di bawah posisi jari
+        const targetLeft = fingerX - (pillWidth / 2);
+        const minLeft = 4;
+        const maxLeft = dock.clientWidth - pillWidth - 4;
+        const clampedLeft = Math.max(minLeft, Math.min(maxLeft, targetLeft));
+
+        // Ikuti jari secara real-time dengan efek membesar (scale up 1.08x)
+        pill.style.transition = 'none';
+        pill.style.transform = 'translateX(' + clampedLeft + 'px) scale(1.08)';
+
+        // Sorot item terdekat di bawah jari secara real-time
+        const closest = getClosestItem(fingerX);
+        if (closest && closest !== currentActiveItem) {
+          currentActiveItem = closest;
+          mobItems.forEach(function (it) {
+            if (it === closest) {
+              it.classList.add('active');
+            } else {
+              it.classList.remove('active');
+            }
+          });
+          // Umpan balik getar haptic mikro jika didukung perangkat
+          if (navigator.vibrate) {
+            try { navigator.vibrate(8); } catch (err) {}
+          }
+        }
+      }
+
+      // --- REAL-TIME FINGER TRACKING (touchstart, touchmove, touchend) ---
+      function handleTouchStart(e) {
+        const pt = getTouchCoord(e);
+        isDragging = true;
+        hasMoved = false;
+        startX = pt.x;
+        startY = pt.y;
+        dockRect = dock.getBoundingClientRect();
+
+        pill.classList.add('is-dragging');
+        pill.style.transition = 'box-shadow 0.2s ease, filter 0.2s ease';
+
+        updateDragPosition(pt.x);
+      }
+
+      function handleTouchMove(e) {
+        if (!isDragging) return;
+        const pt = getTouchCoord(e);
+
+        if (Math.abs(pt.x - startX) > 4 || Math.abs(pt.y - startY) > 4) {
+          hasMoved = true;
+        }
+
+        // Nonaktifkan default scroll browser pada area navbar saat digeser
+        if (e.cancelable) {
+          e.preventDefault();
+        }
+
+        updateDragPosition(pt.x);
+      }
+
+      function handleTouchEnd(e) {
+        if (!isDragging) return;
+        isDragging = false;
+        pill.classList.remove('is-dragging');
+        dockRect = null;
+
+        // Kembalikan animasi pegas lembut
+        pill.style.transition = 'transform 0.42s cubic-bezier(0.34, 1.45, 0.64, 1), width 0.35s cubic-bezier(0.34, 1.45, 0.64, 1), box-shadow 0.25s ease, filter 0.25s ease';
+
+        if (currentActiveItem) {
+          snapToItem(currentActiveItem, true);
+
+          // Jika terjadi gesture geser, picu navigasi ke section tujuan
+          if (hasMoved) {
+            const secId = currentActiveItem.getAttribute('data-section');
+            scrollToSection(secId);
+            if (typeof playAudio === 'function') playAudio('click');
+          }
+        }
+      }
+
+      // Daftarkan Touch Event Listeners Khusus Mobile
+      dock.addEventListener('touchstart', handleTouchStart, { passive: false });
+      window.addEventListener('touchmove', handleTouchMove, { passive: false });
+      window.addEventListener('touchend', handleTouchEnd, { passive: false });
+      window.addEventListener('touchcancel', handleTouchEnd, { passive: false });
+
+      // Dukungan Pointer Events (Universal Mobile & Desktop Emulation)
+      dock.addEventListener('pointerdown', function (e) {
+        if (e.pointerType === 'mouse' && !isMobile()) return;
+        handleTouchStart(e);
+
+        function onPointerMove(ev) {
+          handleTouchMove(ev);
+        }
+        function onPointerUp(ev) {
+          window.removeEventListener('pointermove', onPointerMove);
+          window.removeEventListener('pointerup', onPointerUp);
+          window.removeEventListener('pointercancel', onPointerUp);
+          handleTouchEnd(ev);
+        }
+        window.addEventListener('pointermove', onPointerMove, { passive: false });
+        window.addEventListener('pointerup', onPointerUp, { passive: false });
+        window.addEventListener('pointercancel', onPointerUp, { passive: false });
+      });
+
+      // Cegah klik ganda jika baru saja selesai menggeser (swipe)
+      dock.addEventListener('click', function (e) {
+        if (hasMoved) {
+          e.preventDefault();
+          e.stopPropagation();
+          hasMoved = false;
+        }
+      }, true);
+
+      // Sinkronisasi Klik/Tap Biasa pada Menu
+      mobItems.forEach(function (item) {
+        item.addEventListener('click', function (e) {
+          e.preventDefault();
+          if (typeof playAudio === 'function') playAudio('click');
+          snapToItem(this, true);
+          const secId = this.getAttribute('data-section');
+          scrollToSection(secId);
+        });
+      });
+
+      // --- SINKRONISASI SCROLL OTOMATIS (SCROLL SPY) ---
+      function updateActivePillFromScroll() {
+        if (isDragging || !isMobile()) return;
+
+        const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+        const viewportHeight = window.innerHeight;
+        const docHeight = document.documentElement.scrollHeight;
+
+        // Jika mendekati bagian paling bawah halaman, kunci 'contact'
+        if (scrollY + viewportHeight >= docHeight - 140) {
+          const contactItem = document.querySelector('.nav-mob-item[data-section="contact"]');
+          if (contactItem && currentActiveItem !== contactItem) {
+            snapToItem(contactItem, true);
+          }
+          return;
+        }
+
+        // Jika berada di paling atas, kunci 'hero'
+        if (scrollY < 240) {
+          const heroItem = document.querySelector('.nav-mob-item[data-section="hero"]');
+          if (heroItem && currentActiveItem !== heroItem) {
+            snapToItem(heroItem, true);
+          }
+          return;
+        }
+
+        let activeSection = 'hero';
+        for (let i = 0; i < sectionMap.length; i++) {
+          const el = document.getElementById(sectionMap[i].id);
+          if (el) {
+            const top = el.offsetTop - 180;
+            if (scrollY >= top) {
+              activeSection = sectionMap[i].name;
+            }
+          }
+        }
+
+        const targetItem = document.querySelector('.nav-mob-item[data-section="' + activeSection + '"]');
+        if (targetItem && currentActiveItem !== targetItem) {
+          snapToItem(targetItem, true);
+        }
+      }
+
+      window.addEventListener('scroll', updateActivePillFromScroll, { passive: true });
+
+      // Sinkronisasi ulang saat rotasi layar atau perubahan ukuran jendela
+      window.addEventListener('resize', function () {
+        if (isMobile() && currentActiveItem) {
+          dockRect = null;
+          snapToItem(currentActiveItem, false);
+        }
+      });
+      window.addEventListener('orientationchange', function () {
+        setTimeout(function () {
+          if (currentActiveItem) {
+            dockRect = null;
+            snapToItem(currentActiveItem, false);
+          }
+        }, 150);
+      });
+
+      // Penyelarasan Posisi Awal saat Halaman Selesai Dimuat
+      function initPill() {
+        if (!isMobile()) return;
+        const activeItem = document.querySelector('.nav-mob-item.active') || mobItems[0];
+        if (activeItem) {
+          if (activeItem.offsetWidth > 0) {
+            snapToItem(activeItem, false);
+          } else {
+            requestAnimationFrame(initPill);
+          }
+        }
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initPill);
+      } else {
+        initPill();
+      }
+      window.addEventListener('load', initPill);
+      setTimeout(initPill, 100);
+      setTimeout(initPill, 400);
+      setTimeout(initPill, 1000);
+    })();
+  </script>
 
 </body>
 </html>
