@@ -12,7 +12,271 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <!-- External Libraries: Three.js 3D Engine, VanillaTilt & Lucide Icons -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
+
+    // ================= MOBILE BOTTOM NAVBAR: LIQUID GLASS PILL & TOUCH SWIPE GESTURE =================
+    (function () {
+      const dock = document.getElementById('navMobileDock');
+      const pill = document.getElementById('navMobPill');
+      const mobItems = document.querySelectorAll('.nav-mob-item');
+      if (!dock || !pill || !mobItems.length) return;
+
+      let isDragging = false;
+      let hasMoved = false;
+      let startX = 0;
+      let currentActiveItem = mobItems[0];
+
+      const sectionMap = [
+        { id: 'hero', name: 'hero' },
+        { id: 'about', name: 'about' },
+        { id: 'experience', name: 'about' },
+        { id: 'projects', name: 'projects' },
+        { id: 'why', name: 'projects' },
+        { id: 'education', name: 'education' },
+        { id: 'skills', name: 'education' },
+        { id: 'soft-skills', name: 'education' },
+        { id: 'contact', name: 'contact' }
+      ];
+
+      function isMobile() {
+        return window.innerWidth <= 768;
+      }
+
+      // Kunci (Snap) Kapsul Kaca ke Item Menu dengan Animasi Pegas Lembut (Spring Transition)
+      function snapToItem(item, animate = true) {
+        if (!item || !pill) return;
+        currentActiveItem = item;
+
+        if (!animate) {
+          pill.style.transition = 'none';
+        } else {
+          pill.style.transition = 'transform 0.42s cubic-bezier(0.34, 1.45, 0.64, 1), width 0.35s cubic-bezier(0.34, 1.45, 0.64, 1), box-shadow 0.25s ease, filter 0.25s ease';
+        }
+
+        const left = item.offsetLeft;
+        const width = item.offsetWidth;
+
+        pill.style.width = width + 'px';
+        pill.style.transform = 'translateX(' + left + 'px) scale(1)';
+
+        mobItems.forEach(it => {
+          if (it === item) {
+            it.classList.add('active');
+          } else {
+            it.classList.remove('active');
+          }
+        });
+      }
+
+      // Cari Item Menu Terdekat Berdasarkan Posisi Horizontal Jari
+      function getClosestItem(x) {
+        let closest = currentActiveItem;
+        let minDiff = Infinity;
+        mobItems.forEach(item => {
+          const center = item.offsetLeft + item.offsetWidth / 2;
+          const diff = Math.abs(x - center);
+          if (diff < minDiff) {
+            minDiff = diff;
+            closest = item;
+          }
+        });
+        return closest;
+      }
+
+      // --- REAL-TIME FINGER TRACKING (touchstart, touchmove, touchend) ---
+      function handleTouchStart(e) {
+        if (!isMobile()) return;
+        const touch = e.touches ? e.touches[0] : e;
+        isDragging = true;
+        hasMoved = false;
+        startX = touch.clientX;
+
+        pill.classList.add('is-dragging');
+        pill.style.transition = 'box-shadow 0.2s ease, filter 0.2s ease';
+
+        updateDragPosition(touch.clientX);
+      }
+
+      function handleTouchMove(e) {
+        if (!isDragging || !isMobile()) return;
+        const touch = e.touches ? e.touches[0] : e;
+
+        if (Math.abs(touch.clientX - startX) > 4) {
+          hasMoved = true;
+        }
+
+        // Nonaktifkan default scroll browser pada area navbar saat digeser
+        if (e.cancelable) {
+          e.preventDefault();
+        }
+
+        updateDragPosition(touch.clientX);
+      }
+
+      function updateDragPosition(clientX) {
+        const dockRect = dock.getBoundingClientRect();
+        const fingerX = clientX - dockRect.left;
+        const pillWidth = currentActiveItem ? currentActiveItem.offsetWidth : 52;
+
+        // Pusatkan kapsul kaca di bawah posisi jari
+        const targetLeft = fingerX - (pillWidth / 2);
+        const minLeft = 4;
+        const maxLeft = dock.clientWidth - pillWidth - 4;
+        const clampedLeft = Math.max(minLeft, Math.min(maxLeft, targetLeft));
+
+        // Ikuti jari secara real-time dengan efek membesar (scale up 1.08x)
+        pill.style.transition = 'none';
+        pill.style.transform = 'translateX(' + clampedLeft + 'px) scale(1.08)';
+
+        // Sorot item terdekat di bawah jari secara real-time
+        const closest = getClosestItem(fingerX);
+        if (closest && closest !== currentActiveItem) {
+          currentActiveItem = closest;
+          mobItems.forEach(it => {
+            if (it === closest) {
+              it.classList.add('active');
+            } else {
+              it.classList.remove('active');
+            }
+          });
+          // Umpan balik getar haptic mikro jika didukung perangkat
+          if (navigator.vibrate) {
+            try { navigator.vibrate(8); } catch (err) {}
+          }
+        }
+      }
+
+      function handleTouchEnd(e) {
+        if (!isDragging) return;
+        isDragging = false;
+        pill.classList.remove('is-dragging');
+
+        // Kembalikan animasi pegas lembut
+        pill.style.transition = 'transform 0.42s cubic-bezier(0.34, 1.45, 0.64, 1), width 0.35s cubic-bezier(0.34, 1.45, 0.64, 1), box-shadow 0.25s ease, filter 0.25s ease';
+
+        if (currentActiveItem) {
+          snapToItem(currentActiveItem, true);
+
+          // Jika terjadi gesture geser, picu navigasi ke section tujuan
+          if (hasMoved) {
+            const secId = currentActiveItem.getAttribute('data-section');
+            const targetEl = document.getElementById(secId);
+            if (targetEl) {
+              targetEl.scrollIntoView({ behavior: 'smooth' });
+            }
+            playAudio('click');
+          }
+        }
+      }
+
+      // Daftarkan Touch Event Listeners Khusus Mobile
+      dock.addEventListener('touchstart', handleTouchStart, { passive: false });
+      window.addEventListener('touchmove', handleTouchMove, { passive: false });
+      window.addEventListener('touchend', handleTouchEnd, { passive: false });
+      window.addEventListener('touchcancel', handleTouchEnd, { passive: false });
+
+      // Dukungan Drag Mouse untuk Pengujian DevTools Mobile Mode
+      dock.addEventListener('mousedown', function (e) {
+        if (!isMobile()) return;
+        handleTouchStart(e);
+
+        function onMouseMove(ev) {
+          handleTouchMove(ev);
+        }
+        function onMouseUp(ev) {
+          window.removeEventListener('mousemove', onMouseMove);
+          window.removeEventListener('mouseup', onMouseUp);
+          handleTouchEnd(ev);
+        }
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+      });
+
+      // Cegah klik ganda jika baru saja selesai menggeser (swipe)
+      dock.addEventListener('click', function (e) {
+        if (hasMoved) {
+          e.preventDefault();
+          e.stopPropagation();
+          hasMoved = false;
+        }
+      }, true);
+
+      // Sinkronisasi Klik/Tap Biasa pada Menu
+      mobItems.forEach(item => {
+        item.addEventListener('click', function (e) {
+          playAudio('click');
+          snapToItem(this, true);
+        });
+      });
+
+      // --- SINKRONISASI SCROLL OTOMATIS (SCROLL SPY) ---
+      function updateActivePillFromScroll() {
+        if (isDragging || !isMobile()) return;
+
+        const scrollY = window.scrollY;
+        const viewportHeight = window.innerHeight;
+        const docHeight = document.documentElement.scrollHeight;
+
+        // Jika mendekati bagian paling bawah halaman, kunci 'contact'
+        if (scrollY + viewportHeight >= docHeight - 140) {
+          const contactItem = document.querySelector('.nav-mob-item[data-section="contact"]');
+          if (contactItem && currentActiveItem !== contactItem) {
+            snapToItem(contactItem, true);
+          }
+          return;
+        }
+
+        // Jika berada di paling atas, kunci 'hero'
+        if (scrollY < 240) {
+          const heroItem = document.querySelector('.nav-mob-item[data-section="hero"]');
+          if (heroItem && currentActiveItem !== heroItem) {
+            snapToItem(heroItem, true);
+          }
+          return;
+        }
+
+        let activeSection = 'hero';
+        for (let i = 0; i < sectionMap.length; i++) {
+          const el = document.getElementById(sectionMap[i].id);
+          if (el) {
+            const top = el.offsetTop - 180;
+            if (scrollY >= top) {
+              activeSection = sectionMap[i].name;
+            }
+          }
+        }
+
+        const targetItem = document.querySelector('.nav-mob-item[data-section="' + activeSection + '"]');
+        if (targetItem && currentActiveItem !== targetItem) {
+          snapToItem(targetItem, true);
+        }
+      }
+
+      window.addEventListener('scroll', updateActivePillFromScroll, { passive: true });
+
+      // Sinkronisasi ulang saat rotasi layar atau perubahan ukuran jendela
+      window.addEventListener('resize', function () {
+        if (isMobile() && currentActiveItem) {
+          snapToItem(currentActiveItem, false);
+        }
+      });
+
+      // Penyelarasan Posisi Awal saat Halaman Selesai Dimuat
+      function initPill() {
+        if (!isMobile()) return;
+        const activeItem = document.querySelector('.nav-mob-item.active') || mobItems[0];
+        snapToItem(activeItem, false);
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initPill);
+      } else {
+        initPill();
+      }
+      setTimeout(initPill, 150);
+    })();
+
+  </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -1820,186 +2084,43 @@
     /* Modal Image Showcase Frame */
     .modal-preview-card {
       margin: 16px 0 20px 0;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
       border: 1px solid var(--line);
-      border-radius: 9px;
-      overflow: hidden;
-      background: var(--bg-alt);
-      box-shadow: 0 4px 16px rgba(21, 43, 38, 0.05);
-    }
-    .modal-preview-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 12px;
-      background: #E8ECE0;
-      border-bottom: 1px solid var(--line);
-      gap: 10px;
-    }
-    .modal-preview-dots {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-    .modal-preview-dots span {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      display: inline-block;
-    }
-    .modal-preview-dots .dot-red { background: #E06C75; }
-    .modal-preview-dots .dot-amber { background: #E5C07B; }
-    .modal-preview-dots .dot-green { background: #98C379; }
-    .modal-preview-address {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--paper);
-      padding: 3px 12px;
-      border-radius: 100px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      color: var(--ink-soft);
-      border: 1px solid var(--line);
-      max-width: 280px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .modal-preview-address svg {
-      width: 11px;
-      height: 11px;
-      color: var(--accent);
-      flex-shrink: 0;
-    }
-    .modal-preview-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--accent-deep);
-      text-decoration: none;
-      padding: 3px 8px;
-      border-radius: 4px;
-      background: rgba(37, 66, 42, 0.08);
-      transition: all .15s ease;
-      white-space: nowrap;
-    }
-    .modal-preview-link:hover {
-      background: var(--accent-deep);
-      color: var(--hero-ink);
-    }
-    .modal-preview-body {
-      position: relative;
-      width: 100%;
-      height: 275px;
-      background: #0E1B17;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      box-shadow: 0 8px 24px rgba(21, 43, 38, 0.08);
+      background: var(--paper-warm);
     }
     .modal-preview-img {
       width: 100%;
-      height: 100%;
-      object-fit: contain;
-      background: #0E1B17;
+      height: 240px;
+      object-fit: cover;
       display: block;
-      transition: transform .3s ease;
+      transition: transform .4s ease;
     }
-    .modal-preview-fallback {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: rgba(245, 246, 239, 0.75);
-      gap: 8px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      padding: 40px 20px;
-      text-align: center;
-    }
-    .modal-preview-fallback svg {
-      width: 36px;
-      height: 36px;
-      opacity: 0.6;
+    .modal-preview-img:hover {
+      transform: scale(1.02);
     }
     .modal-preview-caption {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 7px 12px;
+      padding: 10px 14px;
       font-size: 12px;
       color: var(--ink-soft);
+      border-top: 1px solid var(--line);
       background: var(--paper);
-      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    .modal-preview-caption svg {
-      width: 13px;
-      height: 13px;
-      color: var(--accent);
-      flex-shrink: 0;
-    }
-    .modal-section-title {
+    .modal-preview-caption span.badge {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 11.5px;
-      font-weight: 700;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      background: rgba(37, 66, 42, 0.08);
       color: var(--accent-deep);
-      margin: 16px 0 8px 0;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-    }
-    .modal-section-title svg {
-      width: 13px;
-      height: 13px;
-      color: var(--accent);
-    }
-    .modal-points-list {
-      font-size: 13px;
-      color: var(--ink-soft);
-      padding-left: 18px;
-      line-height: 1.65;
-      margin: 0 0 16px 0;
-    }
-    .modal-points-list li {
-      margin-bottom: 5px;
-    }
-    .modal-footer {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 10px;
-      margin-top: 20px;
-      padding-top: 14px;
-      border-top: 1px solid var(--line);
-    }
-    .modal-btn-close {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 16px;
-      border-radius: 100px;
-      font-size: 13px;
       font-weight: 600;
-      background: var(--bg-alt);
-      color: var(--ink);
-      border: 1px solid var(--line);
-      cursor: pointer;
-      transition: all .15s ease;
     }
-    .modal-btn-close:hover {
-      background: var(--line);
-      color: var(--accent-deep);
-    }
-    @media (max-width: 640px) {
-      .modal-preview-body { height: 195px; }
-      .modal-preview-address { max-width: 140px; }
-    }
-    
+  
+  
     /* Floating WhatsApp Action Button */
     .wa-float {
       position: fixed;
@@ -2086,12 +2207,14 @@
 
       /* Bentuk Kapsul (Pill-Shaped) dengan Efek Liquid Glass (Tinted ~20% Opasitas Warna Dasar) */
       .nav-mobile-dock {
+        position: relative;
         display: flex !important;
         align-items: center;
         gap: 3px;
         padding: 5px 8px;
         border-radius: 9999px;
         pointer-events: auto;
+        touch-action: none; /* Nonaktifkan default scroll browser saat digeser */
 
         /* Material Liquid Glass Tinted */
         background: rgba(21, 43, 38, 0.20);
@@ -2102,6 +2225,8 @@
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.20), 0 2px 10px rgba(21, 43, 38, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.4);
 
         user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
         -webkit-tap-highlight-color: transparent;
         animation: navPillFloatIn .35s cubic-bezier(0.16, 1, 0.3, 1);
       }
@@ -2111,8 +2236,53 @@
         to { transform: translateY(0); opacity: 1; }
       }
 
+      /* Floating Liquid Pill Indicator (Specular Highlight Pill Ala iOS 26 Liquid Glass) */
+      .nav-mob-pill {
+        position: absolute;
+        top: 5px;
+        bottom: 5px;
+        left: 0;
+        width: 52px;
+        border-radius: 9999px;
+        pointer-events: none;
+        z-index: 1;
+
+        /* Deep Botanical Emerald Glass Liquid Pill */
+        background: linear-gradient(135deg, rgba(37, 66, 42, 0.95) 0%, rgba(21, 43, 38, 0.98) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        box-shadow: 0 4px 16px -2px rgba(21, 43, 38, 0.55), 0 2px 6px rgba(0, 0, 0, 0.20), inset 0 1px 1px rgba(255, 255, 255, 0.50), inset 0 -1px 1px rgba(0, 0, 0, 0.25);
+
+        transform-origin: center center;
+        will-change: transform, width, box-shadow, filter;
+        transition: transform 0.42s cubic-bezier(0.34, 1.45, 0.64, 1),
+                    width 0.35s cubic-bezier(0.34, 1.45, 0.64, 1),
+                    box-shadow 0.25s ease,
+                    filter 0.25s ease;
+      }
+
+      /* Top Specular Glare Arc on Liquid Pill */
+      .nav-mob-pill::after {
+        content: '';
+        position: absolute;
+        top: 1px;
+        left: 8px;
+        right: 8px;
+        height: 42%;
+        border-radius: 9999px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.0) 100%);
+        pointer-events: none;
+      }
+
+      /* Efek saat jari menahan & menggeser: Membesar sedikit (scale up 1.08x) & kilau cahaya lebih terang */
+      .nav-mob-pill.is-dragging {
+        box-shadow: 0 8px 30px rgba(21, 43, 38, 0.70), 0 0 24px rgba(159, 196, 141, 0.55), inset 0 1.5px 2px rgba(255, 255, 255, 0.75), inset 0 -1px 2px rgba(0, 0, 0, 0.35);
+        filter: brightness(1.18) saturate(125%);
+      }
+
       /* Tata Letak Menu Mobile Horizontal Sejajar */
       .nav-mob-item {
+        position: relative;
+        z-index: 2;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -2120,19 +2290,25 @@
         gap: 2px;
         padding: 6px 12px;
         border-radius: 9999px;
+        background: transparent !important;
+        box-shadow: none !important;
         color: var(--ink);
         text-decoration: none;
-        transition: all .25s cubic-bezier(0.16, 1, 0.3, 1);
-        position: relative;
         cursor: pointer;
         min-width: 52px;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+        -webkit-tap-highlight-color: transparent;
+        transition: color .2s ease;
       }
 
       .nav-mob-item svg {
         width: 18px;
         height: 18px;
-        transition: transform .2s ease, color .2s ease;
-        color: var(--ink);
+        transition: transform .25s cubic-bezier(0.34, 1.45, 0.64, 1), color .2s ease;
+        color: rgba(21, 43, 38, 0.72);
+        pointer-events: none;
       }
 
       .nav-mob-item span {
@@ -2142,27 +2318,18 @@
         letter-spacing: -0.01em;
         line-height: 1.1;
         transition: color .2s ease;
-        color: var(--ink);
+        color: rgba(21, 43, 38, 0.72);
+        pointer-events: none;
       }
 
-      /* Indikator Kapsul Menyala (Active Pill) pada Menu yang Sedang Aktif */
-      .nav-mob-item.active {
-        background: var(--accent-deep);
-        box-shadow: 0 4px 14px -2px rgba(37, 66, 42, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.25);
-      }
-
+      /* State Menyala (Active Pill) pada Teks & Ikon saat Aktif */
       .nav-mob-item.active svg {
         color: #9FC48D;
-        transform: translateY(-1px);
+        transform: translateY(-1.5px) scale(1.06);
       }
 
       .nav-mob-item.active span {
         color: #F5F6EF;
-      }
-
-      .nav-mob-item:not(.active):active {
-        background: rgba(255, 255, 255, 0.35);
-        transform: scale(0.95);
       }
 
       /* Adaptasi Layar Sangat Sempit (<= 360px) */
@@ -2174,6 +2341,10 @@
         .nav-mobile-dock {
           padding: 4px 6px;
           gap: 2px;
+        }
+        .nav-mob-pill {
+          top: 4px;
+          bottom: 4px;
         }
         .nav-mob-item {
           padding: 5px 8px;
@@ -2216,14 +2387,7 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 15l-6-6-6 6"/></svg>
   </button>
 
-  <!-- Floating WhatsApp Action Button -->
-  <a class="wa-float" id="waFloatBtn" href="https://wa.me/6288274350363" target="_blank" rel="noopener noreferrer" aria-label="Chat WhatsApp 0882-7435-0363" title="Chat WhatsApp (0882-7435-0363)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.5L3 20l1.1-5.4A8.5 8.5 0 1 1 21 11.5z"/>
-      <path d="M8.5 10.5c0 3 2.5 5.5 5.5 5.5"/>
-    </svg>
-  </a>
-
+  <!-- ================= TOP NAVIGATION (CLEAN, TIDAK NABRAK) ================= -->
   <!-- ================= NAVIGATION (DESKTOP TOP STICKY / MOBILE FLOATING BOTTOM DOCK) ================= -->
   <nav class="nav" id="mainNav">
     <!-- Desktop Top Navbar Container -->
@@ -2270,6 +2434,9 @@
 
     <!-- Mobile Floating Liquid Glass Capsule Navbar (Pill-shaped Bottom Dock) -->
     <div class="nav-mobile-dock" id="navMobileDock">
+      <!-- Specular Highlight Floating Liquid Pill Indicator -->
+      <div class="nav-mob-pill" id="navMobPill"></div>
+
       <a href="#hero" class="nav-mob-item active" data-section="hero" title="Beranda">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         <span>Beranda</span>
@@ -2562,12 +2729,12 @@
             <div class="proj-mockup-dots"><span></span><span></span><span></span></div>
             <div class="proj-mockup-url">air-duren.desa.id</div>
           </div>
-          <div class="proj-cover proj-cover-1" onclick="openProjectModal('air-duren')" title="Klik untuk melihat rincian & foto penuh">
+          <div class="proj-cover proj-cover-1">
             <!-- =======================================================================
                  GANTI URL FOTO PROYEK 1 DI SINI (SID DESA AIR DUREN)
                  Petunjuk: Ganti nilai src="..." di bawah dengan tautan screenshot website.
             ======================================================================== -->
-            <img src="foto-air-duren.png" alt="Website SID Desa Air Duren" onerror="this.style.display='none';">
+            <img src="[MASUKKAN_LINK_FOTO_PROYEK_1_AIR_DUREN]" alt="Website SID Desa Air Duren" onerror="this.style.display='none';">
             <div class="proj-cover-fallback">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18"/><circle cx="6" cy="6.5" r="0.5" fill="currentColor"/><circle cx="8.5" cy="6.5" r="0.5" fill="currentColor"/></svg>
               <span>SID Desa Air Duren &bull; BPS Bangka</span>
@@ -2579,7 +2746,7 @@
             <p>Pusat informasi digital terintegrasi dan layanan publik online dengan panel admin CMS untuk profil desa, berita, direktori UMKM, dan surat-menyurat warga online.</p>
             <div class="proj-tags"><span>Laravel</span><span>MySQL</span><span>CMS Admin</span><span>Layanan Publik</span></div>
             <button class="proj-btn" onclick="openProjectModal('air-duren')">
-              Lihat Rincian & Foto ↗
+              Lihat Rincian Teknis
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
             </button>
           </div>
@@ -2591,12 +2758,12 @@
             <div class="proj-mockup-dots"><span></span><span></span><span></span></div>
             <div class="proj-mockup-url">garda.bps.go.id</div>
           </div>
-          <div class="proj-cover proj-cover-3" onclick="openProjectModal('garda')" title="Klik untuk melihat rincian & foto penuh">
+          <div class="proj-cover proj-cover-3">
             <!-- =======================================================================
                  GANTI URL FOTO PROYEK 2 DI SINI (PORTAL GARDA LOOKER STUDIO)
                  Petunjuk: Ganti nilai src="..." di bawah dengan screenshot Looker Studio / GARDA.
             ======================================================================== -->
-            <img src="foto-garda.jpg" alt="Portal GARDA BPS" onerror="this.style.display='none';">
+            <img src="[MASUKKAN_LINK_FOTO_PROYEK_2_PORTAL_GARDA]" alt="Portal GARDA BPS" onerror="this.style.display='none';">
             <div class="proj-cover-fallback">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19V9M10 19V5M16 19v-7M20 19v-3"/></svg>
               <span>Portal GARDA &bull; Looker Studio</span>
@@ -2608,7 +2775,7 @@
             <p>Portal informasi eksekutif BPS Kabupaten Bangka berbasis Google Looker Studio yang menyajikan dashboard analitik interaktif untuk memantau data statistik daerah secara komprehensif.</p>
             <div class="proj-tags"><span>Google Looker Studio</span><span>Data Analytics</span><span>Business Intelligence</span><span>MySQL</span></div>
             <button class="proj-btn" onclick="openProjectModal('garda')">
-              Lihat Rincian & Foto ↗
+              Lihat Rincian Teknis
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
             </button>
           </div>
@@ -2620,12 +2787,12 @@
             <div class="proj-mockup-dots"><span></span><span></span><span></span></div>
             <div class="proj-mockup-url">crawler.bps-bangka.id</div>
           </div>
-          <div class="proj-cover proj-cover-5" onclick="openProjectModal('scraping')" title="Klik untuk melihat rincian & foto penuh">
+          <div class="proj-cover proj-cover-5">
             <!-- =======================================================================
                  GANTI URL FOTO PROYEK 3 DI SINI (WEB SCRAPING UMKM BPS)
                  Petunjuk: Ganti nilai src="..." di bawah dengan screenshot skrip / database scraping.
             ======================================================================== -->
-            <img src="foto-scrapping.png" alt="Web Scraping Data UMKM BPS" onerror="this.style.display='none';">
+            <img src="[MASUKKAN_LINK_FOTO_PROYEK_3_WEB_SCRAPING]" alt="Web Scraping Data UMKM BPS" onerror="this.style.display='none';">
             <div class="proj-cover-fallback">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/><circle cx="12" cy="12" r="4"/></svg>
               <span>Web Scraping Engine &bull; BPS Bangka</span>
@@ -2637,7 +2804,7 @@
             <p>Aplikasi web scraping otomatis berkala untuk melacak, mengekstrak, membersihkan (ETL), dan menyusun data persebaran ratusan UMKM di Kabupaten Bangka ke basis data relasional MySQL secara terstruktur.</p>
             <div class="proj-tags"><span>Web Scraping</span><span>Python / Automation</span><span>ETL Pipeline</span><span>MySQL</span></div>
             <button class="proj-btn" onclick="openProjectModal('scraping')">
-              Lihat Rincian & Foto ↗
+              Lihat Rincian Teknis
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
             </button>
           </div>
@@ -2649,12 +2816,12 @@
             <div class="proj-mockup-dots"><span></span><span></span><span></span></div>
             <div class="proj-mockup-url">padi-rias.app</div>
           </div>
-          <div class="proj-cover proj-cover-2" onclick="openProjectModal('padi-rias')" title="Klik untuk melihat rincian & foto penuh">
+          <div class="proj-cover proj-cover-2">
             <!-- =======================================================================
                  GANTI URL FOTO PROYEK 4 DI SINI (MARKETPLACE PADI)
                  Petunjuk: Ganti nilai src="..." di bawah dengan screenshot aplikasi Flutter / Web.
             ======================================================================== -->
-            <img src="foto-marketplace.jpg" alt="Marketplace Padi Desa Rias" onerror="this.style.display='none';">
+            <img src="[MASUKKAN_LINK_FOTO_PROYEK_4_MARKETPLACE_PADI]" alt="Marketplace Padi Desa Rias" onerror="this.style.display='none';">
             <div class="proj-cover-fallback">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 9l9-6 9 6-9 6-9-6z"/><path d="M3 9v6l9 6 9-6V9"/></svg>
               <span>Marketplace Padi &bull; Flutter & Midtrans</span>
@@ -2666,7 +2833,7 @@
             <p>Platform jual-beli hasil panen padi terintegrasi Midtrans Payment Gateway, manajemen stok gabah petani, dan aplikasi mobile Flutter.</p>
             <div class="proj-tags"><span>Laravel</span><span>Flutter</span><span>Midtrans</span><span>Inventory</span></div>
             <button class="proj-btn" onclick="openProjectModal('padi-rias')">
-              Lihat Rincian & Foto ↗
+              Lihat Rincian Teknis
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
             </button>
           </div>
@@ -2678,12 +2845,12 @@
             <div class="proj-mockup-dots"><span></span><span></span><span></span></div>
             <div class="proj-mockup-url">desa-penyamun.id</div>
           </div>
-          <div class="proj-cover proj-cover-1" onclick="openProjectModal('penyamun')" title="Klik untuk melihat rincian & foto penuh">
+          <div class="proj-cover proj-cover-1">
             <!-- =======================================================================
                  GANTI URL FOTO PROYEK 5 DI SINI (SID DESA PENYAMUN)
                  Petunjuk: Ganti nilai src="..." di bawah dengan screenshot website Penyamun.
             ======================================================================== -->
-            <img src="foto-penyamun.jpg" alt="Website SID Desa Penyamun" onerror="this.style.display='none';">
+            <img src="[MASUKKAN_LINK_FOTO_PROYEK_5_PENYAMUN]" alt="Website SID Desa Penyamun" onerror="this.style.display='none';">
             <div class="proj-cover-fallback">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18"/><circle cx="6" cy="6.5" r="0.5" fill="currentColor"/><circle cx="8.5" cy="6.5" r="0.5" fill="currentColor"/></svg>
               <span>Desa Cantik &bull; SID Penyamun</span>
@@ -2695,7 +2862,7 @@
             <p>Portal layanan publik digital desa dengan panel CMS admin untuk pengelolaan profil desa, artikel, direktori potensi UMKM, dan administrasi digital warga.</p>
             <div class="proj-tags"><span>Laravel</span><span>MySQL</span><span>Admin Panel</span><span>Testing</span></div>
             <button class="proj-btn" onclick="openProjectModal('penyamun')">
-              Lihat Rincian & Foto ↗
+              Lihat Rincian Teknis
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
             </button>
           </div>
@@ -4072,17 +4239,13 @@
       }
     }
 
-        // ================= MODAL PROJECT ARCHITECTURE DATA & ENGINE (5 PROJECTS) =================
+    // ================= MODAL PROJECT ARCHITECTURE DATA & ENGINE (5 PROJECTS) =================
     const projectDetails = {
       'air-duren': {
         title: 'Pengembangan SID Desa Air Duren',
         badge: 'DESA CANTIK BPS &bull; SEPT — OKT 2026',
-        image: 'foto-air-duren.png',
-        previewUrl: 'https://desaairduren.bangka.go.id',
-        caption: 'Tampilan penuh antarmuka portal informasi publik & sistem administrasi Desa Air Duren.',
-        fallbackText: 'Screenshot SID Desa Air Duren',
         desc: 'Website portal informasi digital terpadu dan digitalisasi layanan publik untuk Desa Air Duren yang dikerjakan secara kolaboratif dalam tim program Desa Cantik (Desa Cinta Statistik) BPS Kabupaten Bangka.',
-        diagram: '[ Warga / Publik ]  ──>  [ UI Web Responsif ]\\n        │                         │ (Layanan Online)\\n        ▼                         ▼\\n[ Nginx Web Server ] ──> [ Laravel 11 CMS Backend ]\\n                                  │ (ORM & Query Builder)\\n                                  ▼\\n                         [ MySQL Database Relasional ]',
+        diagram: '[ Warga / Publik ]  ──>  [ UI Web Responsif ]\n        │                         │ (Layanan Online)\n        ▼                         ▼\n[ Nginx Web Server ] ──> [ Laravel 11 CMS Backend ]\n                                  │ (ORM & Query Builder)\n                                  ▼\n                         [ MySQL Database Relasional ]',
         points: [
           'Diskusi dan analisis kebutuhan lapangan bersama tim BPS dan aparatur desa.',
           'Pengembangan panel admin CMS bersama tim untuk profil desa, berita, dan direktori potensi UMKM lokal.',
@@ -4094,12 +4257,8 @@
       'garda': {
         title: 'Portal GARDA — Visualisasi Analitik BPS',
         badge: 'BADAN PUSAT STATISTIK &bull; FEB — JULI 2026',
-        image: 'foto-garda.jpg',
-        previewUrl: 'https://lookerstudio.google.com/reporting/bps-garda',
-        caption: 'Tampilan dashboard visualisasi indikator UMKM dan potensi ekonomi daerah BPS.',
-        fallbackText: 'Dashboard Looker Studio Portal GARDA BPS',
         desc: 'Portal informasi eksekutif GARDA berbasis Google Looker Studio yang mengintegrasikan data statistik ke dalam dashboard analitik interaktif untuk mendukung wawasan kebijakan pimpinan BPS dan instansi daerah.',
-        diagram: '[ MySQL Database Data Mart ]\\n        │ (Data Connector Feed)\\n        ▼\\n[ Google Looker Studio BI Engine ]\\n        │ (Interactivity & Aggregation Filters)\\n        ▼\\n[ Dashboard Analitik GARDA BPS ] ──> [ Stakeholder & Pimpinan Instansi ]',
+        diagram: '[ MySQL Database Data Mart ]\n        │ (Data Connector Feed)\n        ▼\n[ Google Looker Studio BI Engine ]\n        │ (Interactivity & Aggregation Filters)\n        ▼\n[ Dashboard Analitik GARDA BPS ] ──> [ Stakeholder & Pimpinan Instansi ]',
         points: [
           'Perancangan visualisasi data interaktif statistik indikator UMKM dan potensi ekonomi daerah.',
           'Integrasi connector data ke database MySQL untuk pembaruan dashboard berkala.',
@@ -4110,12 +4269,8 @@
       'scraping': {
         title: 'Sistem Otomasi Web Scraping UMKM Bangka',
         badge: 'BADAN PUSAT STATISTIK &bull; FEB — JULI 2026',
-        image: 'foto-scrapping.png',
-        previewUrl: 'automation://bps-bangka/scraper-data-umkm',
-        caption: 'Struktur data hasil scraping berkala, pembersihan tabel (ETL), dan integrasi MySQL.',
-        fallbackText: 'Hasil Web Scraping & Database UMKM BPS',
         desc: 'Aplikasi web scraping otomatis berkala yang dirancang untuk melacak, mengekstrak, membersihkan, dan menyusun ratusan data persebaran UMKM di Kabupaten Bangka ke dalam basis data MySQL secara terstruktur.',
-        diagram: '[ Sumber Data UMKM Eksternal ]\\n        │ (HTTP Automation Request)\\n        ▼\\n[ Web Scraping Engine ] ──> [ Data Cleaning & Parsing ]\\n                                  │ (ETL Pipeline)\\n                                  ▼\\n                         [ MySQL Database Relasional Terstruktur ]',
+        diagram: '[ Sumber Data UMKM Eksternal ]\n        │ (HTTP Automation Request)\n        ▼\n[ Web Scraping Engine ] ──> [ Data Cleaning & Parsing ]\n                                  │ (ETL Pipeline)\n                                  ▼\n                         [ MySQL Database Relasional Terstruktur ]',
         points: [
           'Membangun skrip otomasi web scraping berkala untuk ekstraksi ratusan data UMKM se-Kabupaten Bangka.',
           'Pembersihan, transformasi, dan standardisasi data mentah (ETL) ke database MySQL.',
@@ -4126,12 +4281,8 @@
       'padi-rias': {
         title: 'Marketplace Padi Desa Rias',
         badge: 'PADI RIAS MANAJEMEN &bull; MARET — MEI 2025',
-        image: 'foto-marketplace.jpg',
-        previewUrl: 'https://market-padirias.com & Mobile App',
-        caption: 'Tampilan antarmuka aplikasi mobile Flutter & portal web manajemen stok gabah.',
-        fallbackText: 'Aplikasi Flutter & Web Marketplace Padi',
         desc: 'Platform jual-beli hasil panen padi berbasis web dan mobile application dengan integrasi payment gateway Midtrans yang dibangun secara bersinergi dalam tim.',
-        diagram: '[ Petani & Pembeli (Mobile App Flutter) ]\\n        │ (JSON REST API via Dio / HTTP)\\n        ▼\\n[ Laravel REST API Gateway ] ──> [ Midtrans Payment Gateway ]\\n        │ (Order & Stock Management)       │ (Webhook Web Notif)\\n        ▼                                  ▼\\n[ MySQL Relational DB ] <──────────────────┘ (Verifikasi Status Otomatis)',
+        diagram: '[ Petani & Pembeli (Mobile App Flutter) ]\n        │ (JSON REST API via Dio / HTTP)\n        ▼\n[ Laravel REST API Gateway ] ──> [ Midtrans Payment Gateway ]\n        │ (Order & Stock Management)       │ (Webhook Web Notif)\n        ▼                                  ▼\n[ MySQL Relational DB ] <──────────────────┘ (Verifikasi Status Otomatis)',
         points: [
           'Pengembangan antarmuka mobile responsif dengan framework Flutter (Dart).',
           'Pembangunan REST API Laravel untuk alur data produk, pesanan, dan verifikasi Midtrans.',
@@ -4142,12 +4293,8 @@
       'penyamun': {
         title: 'Desa Cantik SID Penyamun',
         badge: 'DESA CANTIK BPS &bull; FEB — JULI 2026',
-        image: 'foto-penyamun.jpg',
-        previewUrl: 'https://desapenyamun.bangka.go.id',
-        caption: 'Tampilan penuh website profil desa, direktori potensi lokal, dan pengajuan surat online.',
-        fallbackText: 'Website Resmi SID Desa Penyamun',
         desc: 'Portal informasi resmi dan layanan publik digital terpadu untuk Desa Penyamun guna mendukung efisiensi birokrasi dan transparansi publik.',
-        diagram: '[ Warga Desa ] ──> [ Portal Publik & Formulir Pengajuan ]\\n                          │\\n                          ▼\\n[ Perangkat Desa ] ──> [ Laravel CMS Admin Panel ]\\n                          │\\n                          ▼\\n               [ MySQL Database Terpusat ]',
+        diagram: '[ Warga Desa ] ──> [ Portal Publik & Formulir Pengajuan ]\n                          │\n                          ▼\n[ Perangkat Desa ] ──> [ Laravel CMS Admin Panel ]\n                          │\n                          ▼\n               [ MySQL Database Terpusat ]',
         points: [
           'CMS panel pengelolaan profil desa, artikel berkala, dan promosi direktori UMKM.',
           'Fitur layanan publik online untuk mempercepat pelayanan administrasi desa.',
@@ -4166,82 +4313,21 @@
       if (!data || !modal || !modalContent) return;
 
       modalContent.innerHTML = `
-        <div class="modal-badge">${data.badge}</div>
-        <h3 class="modal-title">${data.title}</h3>
-        <p class="modal-desc">${data.desc}</p>
+        <div style="font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--amber); font-weight:600; margin-bottom:6px;">${data.badge}</div>
+        <h3 style="font-family:'Fraunces', serif; font-size:22px; color:var(--ink); margin-bottom:10px;">${data.title}</h3>
+        <p style="font-size:14px; color:var(--ink-soft); line-height:1.6; margin-bottom:16px; text-align:justify;">${data.desc}</p>
         
-        <!-- Frame Pratinjau Foto Layar Penuh (Elegan & Pas Proporsinya) -->
-        <div class="modal-preview-card">
-          <div class="modal-preview-header">
-            <div class="modal-preview-dots">
-              <span class="dot-red"></span>
-              <span class="dot-amber"></span>
-              <span class="dot-green"></span>
-            </div>
-            <div class="modal-preview-address" title="${data.previewUrl}">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-              </svg>
-              <span>${data.previewUrl}</span>
-            </div>
-            <a href="${data.image}" target="_blank" rel="noopener" class="modal-preview-link" title="Buka gambar resolusi penuh di tab baru">
-              <span>Resolusi Penuh</span>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                <polyline points="15 3 21 3 21 9"></polyline>
-                <line x1="10" y1="14" x2="21" y2="3"></line>
-              </svg>
-            </a>
-          </div>
-          <div class="modal-preview-body">
-            <!-- Pratinjau Foto Proyek Utuh (Tampilan Penuh Tanpa Terpotong) -->
-            <img src="${data.image}" alt="${data.title}" class="modal-preview-img" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-            <div class="modal-preview-fallback">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                <circle cx="8.5" cy="8.5" r="1.5"/>
-                <polyline points="21 15 16 10 5 21"/>
-              </svg>
-              <span>${data.fallbackText}</span>
-            </div>
-          </div>
-          <div class="modal-preview-caption">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="12" y1="16" x2="12" y2="12"></line>
-              <line x1="12" y1="8" x2="12.01" y2="8"></line>
-            </svg>
-            <span>${data.caption}</span>
-          </div>
-        </div>
-
-        <h4 class="modal-section-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
-          Alur Arsitektur & Data:
-        </h4>
+        <h4 style="font-family:'JetBrains Mono', monospace; font-size:11.5px; font-weight:700; color:var(--accent-deep); margin-bottom:6px; text-transform:uppercase;">Alur Arsitektur & Data:</h4>
         <pre class="arch-diagram-box">${data.diagram}</pre>
 
-        <h4 class="modal-section-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-          Sorotan Peran & Kerja Sama Tim:
-        </h4>
-        <ul class="modal-points-list">
+        <h4 style="font-family:'JetBrains Mono', monospace; font-size:11.5px; font-weight:700; color:var(--accent-deep); margin-bottom:6px; text-transform:uppercase;">Sorotan Peran & Kerja Sama Tim:</h4>
+        <ul style="font-size:13px; color:var(--ink-soft); padding-left:16px; line-height:1.65; margin-bottom:18px;">
           ${data.points.map(p => `<li>${p}</li>`).join('')}
         </ul>
 
-        <h4 class="modal-section-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-          Stack Teknologi:
-        </h4>
+        <h4 style="font-family:'JetBrains Mono', monospace; font-size:11.5px; font-weight:700; color:var(--accent-deep); margin-bottom:6px; text-transform:uppercase;">Stack Teknologi:</h4>
         <div class="stack-list">
           ${data.stack.map(s => `<span>${s}</span>`).join('')}
-        </div>
-
-        <div class="modal-footer">
-          <button class="modal-btn-close" onclick="closeProjectModal()">
-            <span>Tutup [Esc]</span>
-          </button>
         </div>
       `;
 
@@ -4261,11 +4347,22 @@
     });
 
     window.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') { closeProjectModal(); closeCertModal(); }
+      if (e.key === 'Escape') closeProjectModal();
     });
 
-    
-
+    // Copy to clipboard helper
+    function copyText(text) {
+      playAudio('click');
+      navigator.clipboard.writeText(text).then(function() {
+        const toast = document.getElementById('toastBox');
+        if (toast) {
+          toast.textContent = text + ' berhasil disalin!';
+          toast.classList.add('show');
+          setTimeout(() => toast.classList.remove('show'), 2400);
+        }
+      });
+    }
+  
     // ================= CERTIFICATE & CREDENTIAL SHOWCASE ENGINE (12 CREDENTIALS) =================
     const certDetails = {
       'kemnaker-integrity': {
@@ -4545,7 +4642,6 @@
       });
     }
 
-
     let currentSelectedCert = 'kemnaker-integrity';
 
     function selectCert(key) {
@@ -4628,91 +4724,15 @@
       }
     }
 
-
-    // Copy to clipboard helper
-    function copyText(text) {
-      playAudio('click');
-      navigator.clipboard.writeText(text).then(function() {
-        const toast = document.getElementById('toastBox');
-        if (toast) {
-          toast.textContent = text + ' berhasil disalin!';
-          toast.classList.add('show');
-          setTimeout(() => toast.classList.remove('show'), 2400);
-        }
-      });
-    }
-  
-
-    // ================= MOBILE BOTTOM NAVBAR SCROLL SPY & ACTIVE PILL =================
-    (function () {
-      const mobItems = document.querySelectorAll('.nav-mob-item');
-      if (!mobItems.length) return;
-
-      const sectionMap = [
-        { id: 'hero', name: 'hero' },
-        { id: 'about', name: 'about' },
-        { id: 'experience', name: 'about' },
-        { id: 'projects', name: 'projects' },
-        { id: 'why', name: 'projects' },
-        { id: 'education', name: 'education' },
-        { id: 'skills', name: 'education' },
-        { id: 'soft-skills', name: 'education' },
-        { id: 'contact', name: 'contact' }
-      ];
-
-      function updateActivePill() {
-        const scrollY = window.scrollY;
-        const viewportHeight = window.innerHeight;
-        const docHeight = document.documentElement.scrollHeight;
-
-        // Jika mendekati bagian paling bawah halaman, aktifkan 'contact'
-        if (scrollY + viewportHeight >= docHeight - 140) {
-          setActivePill('contact');
-          return;
-        }
-
-        // Jika berada di paling atas, aktifkan 'hero'
-        if (scrollY < 240) {
-          setActivePill('hero');
-          return;
-        }
-
-        let activeSection = 'hero';
-        for (let i = 0; i < sectionMap.length; i++) {
-          const el = document.getElementById(sectionMap[i].id);
-          if (el) {
-            const top = el.offsetTop - 180;
-            if (scrollY >= top) {
-              activeSection = sectionMap[i].name;
-            }
-          }
-        }
-        setActivePill(activeSection);
-      }
-
-      function setActivePill(sectionName) {
-        mobItems.forEach(item => {
-          if (item.getAttribute('data-section') === sectionName) {
-            item.classList.add('active');
-          } else {
-            item.classList.remove('active');
-          }
-        });
-      }
-
-      mobItems.forEach(item => {
-        item.addEventListener('click', function (e) {
-          playAudio('click');
-          const sec = this.getAttribute('data-section');
-          setActivePill(sec);
-        });
-      });
-
-      window.addEventListener('scroll', updateActivePill, { passive: true });
-      updateActivePill();
-    })();
-
   </script>
+
+
+  <!-- Floating WhatsApp Quick Connect Button -->
+  <a href="https://wa.me/6281273934336" target="_blank" rel="noopener noreferrer" class="wa-float" id="waFloat" title="Chat via WhatsApp">
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 14.99 3.8 13.47 3.8 11.91C3.81 7.37 7.5 3.67 12.05 3.67M9.11 7.43C8.94 7.43 8.68 7.5 8.44 7.76C8.21 8.02 7.56 8.63 7.56 9.87C7.56 11.12 8.47 12.32 8.6 12.5C8.73 12.67 10.4 15.25 12.96 16.35C13.57 16.61 14.04 16.77 14.41 16.89C15.02 17.08 15.58 17.05 16.02 16.99C16.51 16.92 17.54 16.37 17.75 15.77C17.97 15.16 17.97 14.65 17.9 14.54C17.84 14.43 17.67 14.37 17.41 14.24C17.15 14.11 15.89 13.49 15.65 13.4C15.42 13.31 15.25 13.27 15.08 13.53C14.91 13.79 14.42 14.37 14.27 14.54C14.12 14.71 13.97 14.73 13.71 14.6C13.45 14.47 12.62 14.2 11.63 13.32C10.86 12.63 10.34 11.78 10.19 11.52C10.04 11.26 10.17 11.13 10.3 11C10.42 10.88 10.56 10.7 10.7 10.54C10.83 10.37 10.87 10.24 10.96 10.07C11.05 9.9 11 9.75 10.94 9.62C10.87 9.5 10.36 8.24 10.15 7.73C9.94 7.23 9.73 7.3 9.58 7.29C9.43 7.29 9.26 7.29 9.11 7.29V7.43Z"/>
+    </svg>
+  </a>
 
 </body>
 </html>
