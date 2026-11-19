@@ -1856,7 +1856,7 @@
     .wa-float {
       position: fixed;
       bottom: 20px;
-      right: 76px;
+      right: 74px;
       z-index: 60;
       width: 42px;
       height: 42px;
@@ -1887,549 +1887,540 @@
       display: none;
     }
 
-    /* Desktop Gap in Nav Center for Dynamic Island */
-    @media (min-width: 769px) {
-      .nav-center {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-      }
-      .nav-center a:nth-child(3) {
-        margin-right: 230px;
-      }
-    }
-    @media (max-width: 1100px) and (min-width: 769px) {
-      .nav-center a:nth-child(3) {
-        margin-right: 200px;
-      }
-      .nav-center a {
-        font-size: 11.5px;
-        padding: 4px 5px;
-      }
-    }
-
-    /* ================= LIQUID GLASS DYNAMIC ISLAND ================= */
+    /* ================= DYNAMIC ISLAND: MATI DI DESKTOP ================= */
     .dynamic-island-wrapper {
-      position: fixed;
-      top: 13px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 1000;
-      pointer-events: none;
-      display: flex;
-      justify-content: center;
-    }
-
-    .dynamic-island {
-      pointer-events: auto;
-      position: relative;
-      background: rgba(21, 43, 38, 0.90);
-      background: linear-gradient(135deg, rgba(37, 66, 42, 0.94) 0%, rgba(21, 43, 38, 0.98) 100%);
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(21, 43, 38, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.45);
-      color: #F5F6EF;
-      cursor: pointer;
-      user-select: none;
-      -webkit-user-select: none;
-      -webkit-tap-highlight-color: transparent;
-      overflow: hidden;
-      box-sizing: border-box;
-
-      /* Compact Pill Dimensions */
-      width: auto;
-      min-width: 208px;
-      max-width: 320px;
-      height: 35px;
-      border-radius: 9999px;
-      padding: 0 14px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-
-      /* Elastic Spring Transition */
-      transition: width 0.45s cubic-bezier(0.25, 1.4, 0.45, 1),
-                  height 0.45s cubic-bezier(0.25, 1.4, 0.45, 1),
-                  border-radius 0.4s ease,
-                  padding 0.35s ease,
-                  box-shadow 0.3s ease,
-                  background 0.3s ease;
-    }
-
-    /* Specular Light Reflection Arc on Island */
-    .dynamic-island::after {
-      content: '';
-      position: absolute;
-      top: 1px;
-      left: 10px;
-      right: 10px;
-      height: 40%;
-      border-radius: 9999px;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 100%);
-      pointer-events: none;
-      opacity: 0.85;
-    }
-
-    /* Hover state on compact */
-    .dynamic-island:not(.is-expanded):hover {
-      transform: scale(1.02);
-      box-shadow: 0 10px 36px rgba(0, 0, 0, 0.42), 0 0 16px rgba(159, 196, 141, 0.35);
-      border-color: rgba(255, 255, 255, 0.35);
-    }
-
-    /* Compact pill layout */
-    .island-compact {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      width: 100%;
-      height: 100%;
-    }
-
-    .island-pulse-box {
-      position: relative;
-      width: 10px;
-      height: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .island-pulse-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #34D399;
-      box-shadow: 0 0 8px #34D399;
-    }
-
-    .island-pulse-ring {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      border: 1.5px solid #34D399;
-      animation: islandPulse 1.8s infinite cubic-bezier(0.24, 0, 0.38, 1);
-    }
-
-    @keyframes islandPulse {
-      0% { transform: scale(0.8); opacity: 1; }
-      100% { transform: scale(2.4); opacity: 0; }
-    }
-
-    .island-compact-content {
-      display: flex;
-      align-items: center;
-      flex: 1;
-      overflow: hidden;
-      white-space: nowrap;
-      padding: 0 2px;
-    }
-
-    .island-status-badge {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      font-weight: 600;
-      color: #F5F6EF;
-      letter-spacing: -0.01em;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap;
-      transition: opacity 0.25s ease;
-    }
-
-    .island-compact-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      opacity: 0.65;
-      transition: transform 0.3s ease, opacity 0.2s ease;
-    }
-
-    .dynamic-island:hover .island-compact-icon {
-      opacity: 1;
-      transform: translateY(1px);
-    }
-
-    .island-chevron {
-      width: 13px;
-      height: 13px;
-      color: #9FC48D;
-    }
-
-    /* Progress Bar at the bottom of compact pill */
-    .island-progress-track {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background: rgba(255, 255, 255, 0.12);
-      overflow: hidden;
-    }
-
-    .island-progress-bar {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #9FC48D 0%, #B4823D 100%);
-      border-radius: 9999px;
-      transition: width 0.12s linear;
-      box-shadow: 0 0 6px rgba(159, 196, 141, 0.8);
-    }
-
-    /* ================= EXPANDED CARD MODE ================= */
-    .dynamic-island.is-expanded {
-      width: 340px;
-      max-width: calc(100vw - 28px);
-      height: auto;
-      min-height: 172px;
-      border-radius: 24px;
-      padding: 16px 18px 18px;
-      background: linear-gradient(145deg, rgba(37, 66, 42, 0.97) 0%, rgba(15, 30, 26, 0.99) 100%);
-      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.50), 0 0 0 1px rgba(255, 255, 255, 0.28), inset 0 1.5px 2px rgba(255, 255, 255, 0.6);
-      cursor: default;
-    }
-
-    .dynamic-island.is-expanded .island-compact {
       display: none !important;
     }
 
-    .island-expanded {
-      display: none;
-      flex-direction: column;
-      gap: 12px;
-      width: 100%;
-    }
-
-    .dynamic-island.is-expanded .island-expanded {
-      display: flex !important;
-      animation: islandContentFade 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    @keyframes islandContentFade {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Expanded Header: Mini Profile & WIB Clock */
-    .island-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      position: relative;
-    }
-
-    .island-avatar-box {
-      position: relative;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      flex-shrink: 0;
-      border: 1.5px solid rgba(255, 255, 255, 0.35);
-      overflow: visible;
-      background: rgba(37, 66, 42, 0.8);
-    }
-
-    .island-avatar-img {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .island-avatar-fallback {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
-      font-weight: 700;
-      color: #9FC48D;
-      background: #152B26;
-    }
-
-    .island-online-pip {
-      position: absolute;
-      bottom: 0px;
-      right: 0px;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #34D399;
-      border: 2px solid #152B26;
-      box-shadow: 0 0 6px #34D399;
-    }
-
-    .island-meta {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      flex: 1;
-      min-width: 0;
-    }
-
-    .island-name-row {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .island-name {
-      font-family: 'Inter', -apple-system, sans-serif;
-      font-size: 13.5px;
-      font-weight: 700;
-      color: #FFFFFF;
-      letter-spacing: -0.01em;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .island-badge-role {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 9px;
-      font-weight: 700;
-      background: rgba(180, 130, 61, 0.28);
-      border: 1px solid rgba(180, 130, 61, 0.55);
-      color: #E2B774;
-      padding: 1px 5px;
-      border-radius: 9999px;
-      letter-spacing: 0.02em;
-    }
-
-    .island-sub-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .island-role {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10.5px;
-      color: rgba(245, 246, 239, 0.72);
-      white-space: nowrap;
-    }
-
-    .island-clock-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 9.5px;
-      color: #9FC48D;
-      background: rgba(159, 196, 141, 0.12);
-      border: 1px solid rgba(159, 196, 141, 0.25);
-      padding: 1px 6px;
-      border-radius: 9999px;
-    }
-
-    .island-clock-icon {
-      width: 10px;
-      height: 10px;
-    }
-
-    .island-close-btn {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      color: #F5F6EF;
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      flex-shrink: 0;
-      transition: all 0.2s ease;
-      padding: 0;
-    }
-
-    .island-close-btn:hover {
-      background: rgba(255, 255, 255, 0.22);
-      color: #FFFFFF;
-      transform: scale(1.08);
-    }
-
-    .island-close-btn svg {
-      width: 13px;
-      height: 13px;
-    }
-
-    /* Context Badge in Expanded Card */
-    .island-context-pill {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(0, 0, 0, 0.22);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 8px;
-      padding: 5px 9px;
-    }
-
-    .island-context-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #34D399;
-      box-shadow: 0 0 6px #34D399;
-      flex-shrink: 0;
-    }
-
-    .island-context-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      color: #E6EADE;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    /* 3 Quick Action Buttons Grid */
-    .island-actions-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      width: 100%;
-    }
-
-    .island-action-btn {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-      padding: 10px 6px;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2), 0 3px 10px rgba(0, 0, 0, 0.15);
-      color: #FFFFFF;
-      text-decoration: none;
-      cursor: pointer;
-      text-align: center;
-      transition: all 0.22s cubic-bezier(0.25, 1.4, 0.45, 1);
-      box-sizing: border-box;
-    }
-
-    .island-action-btn:hover {
-      background: rgba(255, 255, 255, 0.15);
-      border-color: rgba(255, 255, 255, 0.35);
-      transform: translateY(-2px);
-      box-shadow: inset 0 1px 1.5px rgba(255, 255, 255, 0.4), 0 6px 16px rgba(0, 0, 0, 0.25);
-      color: #FFFFFF;
-    }
-
-    .island-action-btn:active {
-      transform: scale(0.96);
-    }
-
-    .island-action-icon {
-      width: 28px;
-      height: 28px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-    }
-
-    .island-action-icon svg {
-      width: 17px;
-      height: 17px;
-    }
-
-    /* WhatsApp action styling */
-    .island-action-wa .island-action-icon {
-      background: rgba(37, 211, 102, 0.2);
-      color: #25D366;
-    }
-
-    .island-action-wa:hover .island-action-icon {
-      background: #25D366;
-      color: #FFFFFF;
-    }
-
-    /* Email action styling */
-    .island-action-email .island-action-icon {
-      background: rgba(180, 130, 61, 0.2);
-      color: #E2B774;
-    }
-
-    .island-action-email:hover .island-action-icon {
-      background: #B4823D;
-      color: #FFFFFF;
-    }
-
-    /* CV action styling */
-    .island-action-cv .island-action-icon {
-      background: rgba(159, 196, 141, 0.2);
-      color: #9FC48D;
-    }
-
-    .island-action-cv:hover .island-action-icon {
-      background: #9FC48D;
-      color: #152B26;
-    }
-
-    /* Email Copied Active State */
-    .island-action-email.is-copied {
-      background: rgba(52, 211, 153, 0.25) !important;
-      border-color: rgba(52, 211, 153, 0.6) !important;
-      box-shadow: 0 0 16px rgba(52, 211, 153, 0.45) !important;
-    }
-
-    .island-action-email.is-copied .island-action-icon {
-      background: #34D399 !important;
-      color: #152B26 !important;
-      transform: scale(1.1);
-    }
-
-    .island-action-email.is-copied .island-action-title {
-      color: #34D399 !important;
-      font-weight: 700;
-    }
-
-    .island-action-info {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1px;
-    }
-
-    .island-action-title {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-      color: #FFFFFF;
-      white-space: nowrap;
-      transition: color 0.2s ease;
-    }
-
-    .island-action-subtitle {
-      font-family: 'Inter', sans-serif;
-      font-size: 8px;
-      color: rgba(245, 246, 239, 0.65);
-      white-space: nowrap;
-      max-width: 82px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      transition: color 0.2s ease;
-    }
-
-    /* ================= MOBILE FLOATING NAVBAR (MAX-WIDTH: 768PX) ================= */
+    /* ================= DESKTOP AI CHAT ASSISTANT (APPLE LIQUID GLASS) ================= */
+    /* Strictly hidden on Mobile screens (max-width: 768px) */
     @media (max-width: 768px) {
+      #aiChatWidget,
+      .ai-chat-widget,
+      .ai-chat-btn,
+      .ai-chat-window {
+        display: none !important;
+      }
+    }
+
+    /* Strictly active on Desktop (min-width: 769px) */
+    @media (min-width: 769px) {
+      .ai-chat-widget {
+        display: block;
+      }
+
+      /* Desktop Floating Capsule Trigger Button ("Tanya AI") */
+      .ai-chat-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 128px; /* Beside WA (right:74px) and To-Top (right:20px) */
+        z-index: 60;
+        height: 42px;
+        padding: 0 16px;
+        border-radius: 9999px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        text-decoration: none;
+        user-select: none;
+        -webkit-user-select: none;
+        border: 1px solid rgba(255, 255, 255, 0.28);
+
+        /* Apple Liquid Glass Tinted Styling */
+        background: rgba(21, 43, 38, 0.85);
+        background: linear-gradient(135deg, rgba(37, 66, 42, 0.90) 0%, rgba(21, 43, 38, 0.95) 100%);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28), 0 2px 8px rgba(21, 43, 38, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.45);
+        color: #F5F6EF;
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.2s ease;
+      }
+
+      /* Specular Highlight Arc on Trigger Capsule */
+      .ai-chat-btn::after {
+        content: '';
+        position: absolute;
+        top: 1px;
+        left: 10px;
+        right: 10px;
+        height: 40%;
+        border-radius: 9999px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 100%);
+        pointer-events: none;
+      }
+
+      .ai-chat-btn:hover {
+        transform: translateY(-3px) scale(1.04);
+        box-shadow: 0 14px 30px rgba(21, 43, 38, 0.5), 0 0 16px rgba(159, 196, 141, 0.35);
+        border-color: rgba(255, 255, 255, 0.4);
+        color: #FFFFFF;
+      }
+
+      .ai-chat-btn:active {
+        transform: translateY(-1px) scale(0.98);
+      }
+
+      .ai-btn-sparkle {
+        width: 17px;
+        height: 17px;
+        color: #E2B774;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: aiSparkleRotate 6s infinite linear;
+      }
+
+      @keyframes aiSparkleRotate {
+        0% { transform: rotate(0deg) scale(1); }
+        50% { transform: rotate(180deg) scale(1.15); }
+        100% { transform: rotate(360deg) scale(1); }
+      }
+
+      .ai-btn-label {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        color: #F5F6EF;
+      }
+
+      .ai-btn-pulse {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #34D399;
+        box-shadow: 0 0 6px #34D399;
+      }
+
+      /* ================= LIQUID GLASS CHAT WINDOW (380px x 500px) ================= */
+      .ai-chat-window {
+        position: fixed;
+        bottom: 74px;
+        right: 24px;
+        z-index: 100;
+        width: 380px;
+        height: 500px;
+        max-height: calc(100vh - 94px);
+        border-radius: 24px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+
+        /* Apple Liquid Glass Material */
+        background: rgba(18, 36, 31, 0.88);
+        background: linear-gradient(155deg, rgba(37, 66, 42, 0.92) 0%, rgba(15, 30, 26, 0.96) 100%);
+        backdrop-filter: blur(24px) saturate(180%);
+        -webkit-backdrop-filter: blur(24px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.48), 0 0 0 1px rgba(255, 255, 255, 0.08), inset 0 1.5px 2px rgba(255, 255, 255, 0.45);
+
+        /* Smooth Open/Close Animation */
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(18px) scale(0.94);
+        pointer-events: none;
+        transform-origin: bottom right;
+        transition: opacity 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+                    transform 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+                    visibility 0.32s;
+      }
+
+      .ai-chat-window.is-open {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0) scale(1);
+        pointer-events: auto;
+      }
+
+      /* Window Top Specular Glare Arc */
+      .ai-chat-window::after {
+        content: '';
+        position: absolute;
+        top: 1px;
+        left: 20px;
+        right: 20px;
+        height: 24%;
+        border-radius: 24px 24px 0 0;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+        pointer-events: none;
+        opacity: 0.6;
+      }
+
+      /* Header */
+      .ai-chat-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 18px;
+        background: rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        position: relative;
+        z-index: 2;
+      }
+
+      .ai-header-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .ai-header-avatar {
+        position: relative;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: rgba(37, 66, 42, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #9FC48D;
+      }
+
+      .ai-header-avatar svg {
+        width: 19px;
+        height: 19px;
+      }
+
+      .ai-online-pip {
+        position: absolute;
+        bottom: -1px;
+        right: -1px;
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: #34D399;
+        border: 1.5px solid #12241F;
+        box-shadow: 0 0 6px #34D399;
+      }
+
+      .ai-header-info {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+      }
+
+      .ai-header-title {
+        font-family: 'Inter', sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        color: #FFFFFF;
+        letter-spacing: -0.01em;
+      }
+
+      .ai-header-status {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 9.5px;
+        color: #9FC48D;
+      }
+
+      .ai-status-dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: #34D399;
+      }
+
+      .ai-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .ai-reset-btn,
+      .ai-close-btn {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: #E2E8F0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        padding: 0;
+      }
+
+      .ai-reset-btn:hover,
+      .ai-close-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: #FFFFFF;
+        transform: scale(1.08);
+      }
+
+      .ai-reset-btn svg { width: 13px; height: 13px; }
+      .ai-close-btn svg { width: 14px; height: 14px; }
+
+      /* Chat Body Feed */
+      .ai-chat-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        position: relative;
+        z-index: 2;
+        scroll-behavior: smooth;
+      }
+
+      .ai-chat-body::-webkit-scrollbar {
+        width: 4px;
+      }
+      .ai-chat-body::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 9999px;
+      }
+
+      /* Messages */
+      .ai-msg {
+        display: flex;
+        flex-direction: column;
+        max-width: 86%;
+        animation: aiMsgIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+
+      @keyframes aiMsgIn {
+        from { opacity: 0; transform: translateY(6px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      .ai-msg-bot {
+        align-self: flex-start;
+      }
+
+      .ai-msg-user {
+        align-self: flex-end;
+      }
+
+      .ai-msg-bubble {
+        padding: 10px 14px;
+        border-radius: 16px;
+        font-size: 12.5px;
+        line-height: 1.55;
+        color: #F5F6EF;
+        word-break: break-word;
+      }
+
+      .ai-msg-bot .ai-msg-bubble {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-bottom-left-radius: 4px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .ai-msg-user .ai-msg-bubble {
+        background: linear-gradient(135deg, #25422A 0%, #17342B 100%);
+        border: 1px solid rgba(159, 196, 141, 0.35);
+        border-bottom-right-radius: 4px;
+        color: #FFFFFF;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+      }
+
+      .ai-msg-bubble strong {
+        color: #9FC48D;
+      }
+
+      /* CTA Button inside Bot Message */
+      .ai-msg-cta {
+        margin-top: 10px;
+        padding-top: 8px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .ai-wa-cta-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #25D366;
+        color: #FFFFFF !important;
+        text-decoration: none;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 6px 12px;
+        border-radius: 9999px;
+        box-shadow: 0 4px 12px rgba(37, 211, 102, 0.35);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .ai-wa-cta-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(37, 211, 102, 0.5);
+        color: #FFFFFF !important;
+      }
+
+      .ai-wa-cta-btn svg {
+        width: 13px;
+        height: 13px;
+      }
+
+      /* Quick Prompts Container */
+      .ai-quick-prompts {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-top: 4px;
+      }
+
+      .ai-quick-label {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 9.5px;
+        color: rgba(245, 246, 239, 0.6);
+        letter-spacing: 0.02em;
+      }
+
+      .ai-quick-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+      }
+
+      .ai-prompt-pill {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 12px;
+        padding: 7px 9px;
+        color: #F5F6EF;
+        font-family: 'Inter', sans-serif;
+        font-size: 11px;
+        font-weight: 500;
+        text-align: left;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+      }
+
+      .ai-prompt-pill:hover {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(159, 196, 141, 0.45);
+        color: #FFFFFF;
+        transform: translateY(-1.5px);
+      }
+
+      /* Typing Indicator Animation */
+      .ai-typing-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 10px 14px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 16px;
+        border-bottom-left-radius: 4px;
+      }
+
+      .ai-typing-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #9FC48D;
+        animation: aiTypingBounce 1.4s infinite ease-in-out;
+      }
+
+      .ai-typing-dot:nth-child(1) { animation-delay: 0s; }
+      .ai-typing-dot:nth-child(2) { animation-delay: 0.2s; }
+      .ai-typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+      @keyframes aiTypingBounce {
+        0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+        30% { transform: translateY(-5px); opacity: 1; }
+      }
+
+      /* Footer & Input Box */
+      .ai-chat-footer {
+        padding: 10px 14px 12px;
+        background: rgba(0, 0, 0, 0.22);
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        position: relative;
+        z-index: 2;
+      }
+
+      .ai-input-wrap {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 9999px;
+        padding: 4px 6px 4px 14px;
+        transition: border-color 0.2s ease, background 0.2s ease;
+      }
+
+      .ai-input-wrap:focus-within {
+        border-color: rgba(159, 196, 141, 0.6);
+        background: rgba(255, 255, 255, 0.12);
+        box-shadow: 0 0 12px rgba(159, 196, 141, 0.25);
+      }
+
+      .ai-chat-input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: #FFFFFF;
+        font-family: 'Inter', sans-serif;
+        font-size: 12px;
+      }
+
+      .ai-chat-input::placeholder {
+        color: rgba(245, 246, 239, 0.5);
+      }
+
+      .ai-send-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: #25422A;
+        border: 1px solid rgba(159, 196, 141, 0.4);
+        color: #9FC48D;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        padding: 0;
+      }
+
+      .ai-send-btn:hover {
+        background: #9FC48D;
+        color: #152B26;
+        transform: scale(1.08);
+      }
+
+      .ai-send-btn svg {
+        width: 14px;
+        height: 14px;
+        margin-left: 1px;
+      }
+
+      .ai-footer-note {
+        text-align: center;
+        margin-top: 6px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 8.5px;
+        color: rgba(245, 246, 239, 0.45);
+        letter-spacing: 0.02em;
+      }
+    }
+
+    /* ================= MOBILE VIEW (MAX-WIDTH: 768PX) ================= */
+    @media (max-width: 768px) {
+      /* AI Assistant HANYA untuk Desktop, Sembunyikan Penuh di HP */
+      #aiChatWidget,
+      .ai-chat-widget,
+      .ai-chat-btn,
+      .ai-chat-window {
+        display: none !important;
+      }
+
       /* Jarak Aman Konten Paling Bawah Halaman */
       body {
         padding-bottom: 96px;
@@ -2438,9 +2429,444 @@
         padding-bottom: 104px;
       }
 
-      /* Jarak Aman Hero di Mobile agar tidak tertutup Dynamic Island */
+      /* Jarak Aman Hero di Mobile */
       .hero {
-        padding-top: 58px !important;
+        padding-top: 56px !important;
+      }
+
+      /* ================= DYNAMIC ISLAND: AKTIF HANYA DI HP (SOLID MATTE, NON-AI) ================= */
+      .dynamic-island-wrapper {
+        display: flex !important;
+        position: fixed;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        pointer-events: none;
+        justify-content: center;
+      }
+
+      .dynamic-island {
+        pointer-events: auto;
+        position: relative;
+        background: #0B1613;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.3);
+        color: #F5F6EF;
+        cursor: pointer;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        overflow: hidden;
+        box-sizing: border-box;
+
+        /* Compact Pill Dimensions */
+        width: auto;
+        min-width: 195px;
+        max-width: calc(100vw - 28px);
+        height: 33px;
+        border-radius: 9999px;
+        padding: 0 13px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        transition: width 0.4s cubic-bezier(0.25, 1.4, 0.45, 1),
+                    height 0.4s cubic-bezier(0.25, 1.4, 0.45, 1),
+                    border-radius 0.35s ease,
+                    padding 0.3s ease,
+                    background 0.25s ease,
+                    box-shadow 0.25s ease;
+      }
+
+      /* Compact Mode Layout */
+      .island-compact {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        width: 100%;
+        height: 100%;
+      }
+
+      .island-pulse-box {
+        position: relative;
+        width: 9px;
+        height: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .island-pulse-dot {
+        width: 6.5px;
+        height: 6.5px;
+        border-radius: 50%;
+        background: #10B981;
+      }
+
+      .island-pulse-ring {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: 1.5px solid #10B981;
+        animation: islandPulse 2s infinite cubic-bezier(0.24, 0, 0.38, 1);
+      }
+
+      @keyframes islandPulse {
+        0% { transform: scale(0.8); opacity: 1; }
+        100% { transform: scale(2.4); opacity: 0; }
+      }
+
+      .island-compact-content {
+        display: flex;
+        align-items: center;
+        flex: 1;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+
+      .island-status-badge {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        font-weight: 600;
+        color: #F5F6EF;
+        letter-spacing: -0.01em;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+
+      .island-compact-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        opacity: 0.6;
+      }
+
+      .island-chevron {
+        width: 11px;
+        height: 11px;
+        color: #9FC48D;
+      }
+
+      .island-progress-track {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: rgba(255, 255, 255, 0.08);
+        overflow: hidden;
+      }
+
+      .island-progress-bar {
+        height: 100%;
+        width: 0%;
+        background: #10B981;
+        border-radius: 9999px;
+        transition: width 0.12s linear;
+      }
+
+      /* Expanded Card Mode */
+      .dynamic-island.is-expanded {
+        width: 330px;
+        max-width: calc(100vw - 28px);
+        height: auto;
+        min-height: 168px;
+        border-radius: 22px;
+        padding: 16px;
+        background: #0E1B17;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
+        cursor: default;
+      }
+
+      .dynamic-island.is-expanded .island-compact {
+        display: none !important;
+      }
+
+      .island-expanded {
+        display: none;
+        flex-direction: column;
+        gap: 12px;
+        width: 100%;
+      }
+
+      .dynamic-island.is-expanded .island-expanded {
+        display: flex !important;
+        animation: islandContentFade 0.25s ease-out forwards;
+      }
+
+      @keyframes islandContentFade {
+        from { opacity: 0; transform: translateY(4px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      /* Header */
+      .island-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        position: relative;
+      }
+
+      .island-avatar-box {
+        position: relative;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        border: 1.5px solid rgba(255, 255, 255, 0.2);
+        background: #152B26;
+      }
+
+      .island-avatar-img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .island-avatar-fallback {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 13px;
+        font-weight: 700;
+        color: #9FC48D;
+        background: #152B26;
+      }
+
+      .island-online-pip {
+        position: absolute;
+        bottom: 0px;
+        right: 0px;
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: #10B981;
+        border: 1.5px solid #0E1B17;
+      }
+
+      .island-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        flex: 1;
+        min-width: 0;
+      }
+
+      .island-name-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .island-name {
+        font-family: 'Inter', -apple-system, sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        color: #FFFFFF;
+        letter-spacing: -0.01em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .island-badge-role {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 8.5px;
+        font-weight: 700;
+        background: #25422A;
+        border: 1px solid rgba(159, 196, 141, 0.4);
+        color: #9FC48D;
+        padding: 1px 5px;
+        border-radius: 9999px;
+      }
+
+      .island-sub-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+
+      .island-role {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        color: rgba(245, 246, 239, 0.7);
+        white-space: nowrap;
+      }
+
+      .island-clock-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 9px;
+        color: #9FC48D;
+        background: #152B26;
+        border: 1px solid rgba(159, 196, 141, 0.25);
+        padding: 1px 5px;
+        border-radius: 9999px;
+      }
+
+      .island-clock-icon {
+        width: 9px;
+        height: 9px;
+      }
+
+      .island-close-btn {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: #F5F6EF;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: all 0.15s ease;
+        padding: 0;
+      }
+
+      .island-close-btn svg { width: 12px; height: 12px; }
+
+      .island-context-pill {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: #152B26;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+        padding: 4px 8px;
+      }
+
+      .island-context-dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: #10B981;
+        flex-shrink: 0;
+      }
+
+      .island-context-label {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 9.5px;
+        color: #E6EADE;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      /* 3 Action Buttons */
+      .island-actions-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        width: 100%;
+      }
+
+      .island-action-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        padding: 9px 4px;
+        border-radius: 12px;
+        background: #172D26;
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        color: #FFFFFF;
+        text-decoration: none;
+        cursor: pointer;
+        text-align: center;
+        transition: background 0.15s ease, transform 0.15s ease;
+        box-sizing: border-box;
+      }
+
+      .island-action-btn:active {
+        transform: scale(0.96);
+        background: #1E3A31;
+      }
+
+      .island-action-icon {
+        width: 26px;
+        height: 26px;
+        border-radius: 7px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .island-action-icon svg { width: 15px; height: 15px; }
+
+      .island-action-wa .island-action-icon {
+        background: rgba(37, 211, 102, 0.18);
+        color: #25D366;
+      }
+
+      .island-action-email .island-action-icon {
+        background: rgba(180, 130, 61, 0.2);
+        color: #E2B774;
+      }
+
+      .island-action-cv .island-action-icon {
+        background: rgba(159, 196, 141, 0.18);
+        color: #9FC48D;
+      }
+
+      .island-action-email.is-copied {
+        background: #064E3B !important;
+        border-color: #10B981 !important;
+      }
+
+      .island-action-email.is-copied .island-action-icon {
+        background: #10B981 !important;
+        color: #064E3B !important;
+      }
+
+      .island-action-email.is-copied .island-action-title {
+        color: #10B981 !important;
+      }
+
+      .island-action-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1px;
+      }
+
+      .island-action-title {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 9.5px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        color: #FFFFFF;
+        white-space: nowrap;
+      }
+
+      .island-action-subtitle {
+        font-family: 'Inter', sans-serif;
+        font-size: 7.5px;
+        color: rgba(245, 246, 239, 0.6);
+        white-space: nowrap;
+        max-width: 80px;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       /* Geser Posisi Floating WhatsApp Button & Back to Top ke Atas (bottom: 84px) */
@@ -2454,7 +2880,7 @@
       }
       .to-top {
         bottom: 84px;
-        right: 72px; /* Sejajar rapi di samping tombol WhatsApp */
+        right: 72px;
         width: 44px;
         height: 44px;
         z-index: 89;
@@ -2494,9 +2920,8 @@
         padding: 5px 8px;
         border-radius: 9999px;
         pointer-events: auto !important;
-        touch-action: none !important; /* Mencegah bentrok dengan scroll vertikal browser */
+        touch-action: none !important;
 
-        /* Material Liquid Glass Tinted */
         background: rgba(21, 43, 38, 0.20);
         background: linear-gradient(135deg, rgba(255, 255, 255, 0.48) 0%, rgba(37, 66, 42, 0.22) 100%);
         backdrop-filter: blur(20px) saturate(180%);
@@ -2516,7 +2941,7 @@
         to { transform: translateY(0); opacity: 1; }
       }
 
-      /* Floating Liquid Pill Indicator (Specular Highlight Pill Ala iOS Liquid Glass Tab Bar) */
+      /* Floating Liquid Pill Indicator */
       .nav-mob-pill {
         position: absolute;
         top: 5px;
@@ -2528,7 +2953,6 @@
         pointer-events: none !important;
         z-index: 1;
 
-        /* Deep Botanical Emerald Glass Liquid Pill */
         background: linear-gradient(135deg, rgba(37, 66, 42, 0.95) 0%, rgba(21, 43, 38, 0.98) 100%);
         border: 1px solid rgba(255, 255, 255, 0.28);
         box-shadow: 0 4px 16px -2px rgba(21, 43, 38, 0.55), 0 2px 6px rgba(0, 0, 0, 0.20), inset 0 1px 1px rgba(255, 255, 255, 0.50), inset 0 -1px 1px rgba(0, 0, 0, 0.25);
@@ -2541,7 +2965,6 @@
                     filter 0.2s ease;
       }
 
-      /* Top Specular Glare Arc on Liquid Pill */
       .nav-mob-pill::after {
         content: '';
         position: absolute;
@@ -2554,13 +2977,11 @@
         pointer-events: none;
       }
 
-      /* Efek saat jari menahan & menggeser: Specular Gleam Lebih Terang & Glow Emerald */
       .nav-mob-pill.is-dragging {
         box-shadow: 0 8px 30px rgba(21, 43, 38, 0.70), 0 0 24px rgba(159, 196, 141, 0.55), inset 0 1.5px 2px rgba(255, 255, 255, 0.75), inset 0 -1px 2px rgba(0, 0, 0, 0.35);
         filter: brightness(1.18) saturate(125%);
       }
 
-      /* Tata Letak Menu Mobile Horizontal Sejajar */
       .nav-mob-item {
         position: relative;
         z-index: 2;
@@ -2607,7 +3028,6 @@
         color: rgba(21, 43, 38, 0.72);
       }
 
-      /* State Menyala (Active Pill) pada Teks & Ikon saat Aktif */
       .nav-mob-item.active svg {
         color: #9FC48D;
         transform: translateY(-1.5px) scale(1.06);
@@ -2617,25 +3037,7 @@
         color: #F5F6EF;
       }
 
-      /* Adaptasi Dynamic Island di Layar HP */
-      .dynamic-island-wrapper {
-        top: 10px;
-      }
-      .dynamic-island {
-        max-width: calc(100vw - 24px);
-        height: 33px;
-        padding: 0 12px;
-      }
-      .island-status-badge {
-        font-size: 10px;
-        max-width: 170px;
-      }
-      .island-chevron {
-        width: 11px;
-        height: 11px;
-      }
-
-      /* Adaptasi Layar Sangat Sempit (<= 360px) */
+      /* Screen <= 360px */
       @media (max-width: 360px) {
         .nav {
           bottom: 12px;
@@ -2669,18 +3071,17 @@
           right: 64px;
         }
         .dynamic-island {
-          min-width: 190px;
+          min-width: 180px;
           padding: 0 10px;
         }
         .island-status-badge {
-          font-size: 9.5px;
-          max-width: 145px;
+          font-size: 9px;
         }
         .island-action-title {
           font-size: 9px;
         }
         .island-action-subtitle {
-          font-size: 7.5px;
+          font-size: 7px;
         }
       }
     }
@@ -2705,7 +3106,7 @@
   </button>
 
   <!-- ================= TOP NAVIGATION (CLEAN, TIDAK NABRAK) ================= -->
-  <!-- ================= DYNAMIC ISLAND (LIQUID GLASS FLOATING PILL / EXPANDED CARD) ================= -->
+  <!-- ================= DYNAMIC ISLAND (SOLID HARDWARE MATTE PILL / EXPANDED CARD - MOBILE ONLY) ================= -->
   <div class="dynamic-island-wrapper" id="dynamicIslandWrapper">
     <div class="dynamic-island" id="dynamicIsland" role="region" aria-label="Dynamic Island Status & Quick Actions" aria-expanded="false">
       
@@ -2831,7 +3232,7 @@
         </div>
       </div>
 
-      <!-- Center Links - Single Line (with center gap for Dynamic Island on Desktop) -->
+      <!-- Center Links - Single Line -->
       <div class="nav-center">
         <a href="#about">Tentang</a>
         <a href="#experience">Pengalaman</a>
@@ -5176,6 +5577,486 @@
       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.888 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
     </svg>
   </a>
+
+
+  <!-- ================= DESKTOP AI CHAT ASSISTANT (APPLE LIQUID GLASS) ================= -->
+  <div class="ai-chat-widget" id="aiChatWidget">
+    
+    <!-- Desktop Floating Capsule Trigger Button ("Tanya AI") -->
+    <button class="ai-chat-btn" id="aiChatBtn" type="button" aria-label="Buka Asisten AI Raihan" title="Tanya AI seputar profil, proyek & kerja sama">
+      <div class="ai-btn-sparkle">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 1L14.5 8.5L22 11L14.5 13.5L12 21L9.5 13.5L2 11L9.5 8.5L12 1Z"/>
+        </svg>
+      </div>
+      <span class="ai-btn-label">Tanya AI</span>
+      <span class="ai-btn-pulse"></span>
+    </button>
+
+    <!-- Liquid Glass Floating Chat Window (380px x 500px) -->
+    <div class="ai-chat-window" id="aiChatWindow" role="dialog" aria-modal="false" aria-label="AI Chat Assistant Raihan">
+      
+      <!-- Window Header -->
+      <div class="ai-chat-header">
+        <div class="ai-header-left">
+          <div class="ai-header-avatar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2 2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/>
+              <rect x="4" y="8" width="16" height="12" rx="4"/>
+              <circle cx="9" cy="13" r="1.5" fill="currentColor"/>
+              <circle cx="15" cy="13" r="1.5" fill="currentColor"/>
+              <path d="M9 17c1.5 1 4.5 1 6 0"/>
+            </svg>
+            <span class="ai-online-pip"></span>
+          </div>
+          <div class="ai-header-info">
+            <div class="ai-header-title">AI Assistant &bull; Raihan</div>
+            <div class="ai-header-status">
+              <span class="ai-status-dot"></span>
+              <span>Online &bull; Siap Menjawab</span>
+            </div>
+          </div>
+        </div>
+        <div class="ai-header-actions">
+          <button class="ai-reset-btn" id="aiResetBtn" title="Mulai ulang percakapan" aria-label="Reset percakapan">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+              <path d="M3 3v5h5"/>
+            </svg>
+          </button>
+          <button class="ai-close-btn" id="aiCloseBtn" title="Tutup jendela chat" aria-label="Tutup jendela chat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Message Feed Body -->
+      <div class="ai-chat-body" id="aiChatBody">
+        <!-- Initial AI Welcome Message -->
+        <div class="ai-msg ai-msg-bot">
+          <div class="ai-msg-bubble">
+            <p>Halo! 👋 Saya adalah asisten cerdas pribadi <strong>Muhammad Raihan Pasha</strong> (Full-Stack Developer, Data Analyst & Sarjana Terapan RPL Cumlaude Polman Babel).</p>
+            <p style="margin-top: 6px;">Ada yang bisa saya bantu terkait latar belakang, proyek nyata, keahlian teknis, atau peluang kerja sama dengan Raihan?</p>
+          </div>
+        </div>
+
+        <!-- Quick Prompt Pills Container -->
+        <div class="ai-quick-prompts" id="aiQuickPrompts">
+          <span class="ai-quick-label">Pilih pertanyaan cepat:</span>
+          <div class="ai-quick-grid">
+            <button type="button" class="ai-prompt-pill" data-prompt="Profil & Keahlian">
+              <span>⚡ Profil & Keahlian</span>
+            </button>
+            <button type="button" class="ai-prompt-pill" data-prompt="Proyek Unggulan">
+              <span>🚀 Proyek Unggulan</span>
+            </button>
+            <button type="button" class="ai-prompt-pill" data-prompt="Layanan & Kolaborasi">
+              <span>💼 Layanan & Kolaborasi</span>
+            </button>
+            <button type="button" class="ai-prompt-pill" data-prompt="Kontak Langsung">
+              <span>💬 Kontak Langsung</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat Input Area -->
+      <form class="ai-chat-footer" id="aiChatForm" onsubmit="return false;">
+        <div class="ai-input-wrap">
+          <input type="text" id="aiChatInput" class="ai-chat-input" placeholder="Tanyakan apa saja tentang Raihan..." autocomplete="off" />
+          <button type="submit" class="ai-send-btn" id="aiSendBtn" aria-label="Kirim Pesan" title="Kirim">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <line x1="22" y1="2" x2="11" y2="13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+          </button>
+        </div>
+        <div class="ai-footer-note">
+          <span>Powered by Intelligent Knowledge Engine &bull; Gemini Ready</span>
+        </div>
+      </form>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- ================= DESKTOP AI CHAT ASSISTANT JAVASCRIPT ================= -->
+  <script id="aiAssistantScript">
+    (function initAiAssistant() {
+      const widget = document.getElementById('aiChatWidget');
+      const chatBtn = document.getElementById('aiChatBtn');
+      const chatWindow = document.getElementById('aiChatWindow');
+      const closeBtn = document.getElementById('aiCloseBtn');
+      const resetBtn = document.getElementById('aiResetBtn');
+      const chatBody = document.getElementById('aiChatBody');
+      const chatForm = document.getElementById('aiChatForm');
+      const chatInput = document.getElementById('aiChatInput');
+      const quickPrompts = document.getElementById('aiQuickPrompts');
+
+      if (!chatBtn || !chatWindow) return;
+
+      let isOpen = false;
+      let isBusy = false;
+
+      // 1. Toggle Open / Close
+      function toggleChat() {
+        if (isOpen) {
+          closeChat();
+        } else {
+          openChat();
+        }
+      }
+
+      function openChat() {
+        isOpen = true;
+        chatWindow.classList.add('is-open');
+        chatBtn.classList.add('is-active');
+        if (typeof playAudio === 'function') playAudio('click');
+        setTimeout(() => {
+          if (chatInput) chatInput.focus();
+        }, 150);
+      }
+
+      function closeChat() {
+        isOpen = false;
+        chatWindow.classList.remove('is-open');
+        chatBtn.classList.remove('is-active');
+        if (typeof playAudio === 'function') playAudio('click');
+      }
+
+      chatBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        toggleChat();
+      });
+
+      if (closeBtn) {
+        closeBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          closeChat();
+        });
+      }
+
+      // Close when clicking outside chatWindow and chatBtn
+      document.addEventListener('click', function(e) {
+        if (isOpen && !chatWindow.contains(e.target) && !chatBtn.contains(e.target)) {
+          closeChat();
+        }
+      });
+
+      // Close on Escape key
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && isOpen) {
+          closeChat();
+        }
+      });
+
+      // Prevent clicks inside window from closing it
+      chatWindow.addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
+
+      // 2. Reset Conversation
+      function resetChat() {
+        if (isBusy) return;
+        if (typeof playAudio === 'function') playAudio('click');
+        chatBody.innerHTML = `
+          <div class="ai-msg ai-msg-bot">
+            <div class="ai-msg-bubble">
+              <p>Halo! 👋 Saya adalah asisten cerdas pribadi <strong>Muhammad Raihan Pasha</strong> (Full-Stack Developer, Data Analyst & Sarjana Terapan RPL Cumlaude Polman Babel).</p>
+              <p style="margin-top: 6px;">Ada yang bisa saya bantu terkait latar belakang, proyek nyata, keahlian teknis, atau peluang kerja sama dengan Raihan?</p>
+            </div>
+          </div>
+          <div class="ai-quick-prompts" id="aiQuickPrompts">
+            <span class="ai-quick-label">Pilih pertanyaan cepat:</span>
+            <div class="ai-quick-grid">
+              <button type="button" class="ai-prompt-pill" data-prompt="Profil & Keahlian">
+                <span>⚡ Profil & Keahlian</span>
+              </button>
+              <button type="button" class="ai-prompt-pill" data-prompt="Proyek Unggulan">
+                <span>🚀 Proyek Unggulan</span>
+              </button>
+              <button type="button" class="ai-prompt-pill" data-prompt="Layanan & Kolaborasi">
+                <span>💼 Layanan & Kolaborasi</span>
+              </button>
+              <button type="button" class="ai-prompt-pill" data-prompt="Kontak Langsung">
+                <span>💬 Kontak Langsung</span>
+              </button>
+            </div>
+          </div>
+        `;
+        bindQuickPrompts();
+      }
+
+      if (resetBtn) {
+        resetBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          resetChat();
+        });
+      }
+
+      // 3. Quick Prompt Binding
+      function bindQuickPrompts() {
+        const pills = chatBody.querySelectorAll('.ai-prompt-pill');
+        pills.forEach(pill => {
+          pill.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const text = this.getAttribute('data-prompt') || this.textContent.trim();
+            handleUserMessage(text);
+          });
+        });
+      }
+      bindQuickPrompts();
+
+      // 4. Form Submit
+      if (chatForm && chatInput) {
+        chatForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          const val = chatInput.value.trim();
+          if (val && !isBusy) {
+            chatInput.value = '';
+            handleUserMessage(val);
+          }
+        });
+      }
+
+      // 5. User Message Handling & Smart Response Dispatcher
+      async function handleUserMessage(userText) {
+        if (isBusy || !userText) return;
+        isBusy = true;
+        if (typeof playAudio === 'function') playAudio('click');
+
+        // Append user bubble
+        appendMessage('user', userText);
+
+        // Show typing indicator
+        const typingEl = appendTypingIndicator();
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+        // Try Gemini API if key exists, otherwise local knowledge base
+        let responseData = null;
+        try {
+          if (window.GEMINI_API_KEY) {
+            responseData = await queryGemini(userText);
+          }
+        } catch (err) {
+          console.warn('Gemini query error:', err);
+        }
+
+        if (!responseData) {
+          responseData = getLocalKnowledgeResponse(userText);
+        }
+
+        // Simulate natural typing delay (600ms)
+        setTimeout(() => {
+          if (typingEl && typingEl.parentNode) {
+            typingEl.parentNode.removeChild(typingEl);
+          }
+          if (typeof playAudio === 'function') playAudio('chime');
+
+          // Append bot message container and stream tokens
+          const botBubble = appendBotContainer();
+          streamText(botBubble, responseData.text, function() {
+            // Once typing finishes, append WhatsApp CTA if applicable
+            if (responseData.hasWaCta) {
+              const ctaWrap = document.createElement('div');
+              ctaWrap.className = 'ai-msg-cta';
+              const waUrl = 'https://wa.me/6281273934336?text=' + encodeURIComponent(responseData.waText || 'Halo Raihan, saya tertarik untuk berdiskusi.');
+              ctaWrap.innerHTML = `
+                <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="ai-wa-cta-btn">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.888 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                  </svg>
+                  <span>Hubungi via WhatsApp</span>
+                </a>
+              `;
+              botBubble.appendChild(ctaWrap);
+              chatBody.scrollTop = chatBody.scrollHeight;
+            }
+            isBusy = false;
+          });
+        }, 600);
+      }
+
+      function appendMessage(role, text) {
+        const wrap = document.createElement('div');
+        wrap.className = 'ai-msg ai-msg-' + role;
+        const bubble = document.createElement('div');
+        bubble.className = 'ai-msg-bubble';
+        bubble.textContent = text;
+        wrap.appendChild(bubble);
+        chatBody.appendChild(wrap);
+        chatBody.scrollTop = chatBody.scrollHeight;
+      }
+
+      function appendTypingIndicator() {
+        const wrap = document.createElement('div');
+        wrap.className = 'ai-msg ai-msg-bot';
+        wrap.id = 'aiTypingIndicator';
+        wrap.innerHTML = `
+          <div class="ai-typing-indicator">
+            <span class="ai-typing-dot"></span>
+            <span class="ai-typing-dot"></span>
+            <span class="ai-typing-dot"></span>
+          </div>
+        `;
+        chatBody.appendChild(wrap);
+        return wrap;
+      }
+
+      function appendBotContainer() {
+        const wrap = document.createElement('div');
+        wrap.className = 'ai-msg ai-msg-bot';
+        const bubble = document.createElement('div');
+        bubble.className = 'ai-msg-bubble';
+        wrap.appendChild(bubble);
+        chatBody.appendChild(wrap);
+        return bubble;
+      }
+
+      // 6. Tokenized Word-by-Word Streaming (Prevents Broken HTML Tags)
+      function streamText(targetEl, fullHtml, onComplete) {
+        const tokens = fullHtml.match(/<[^>]+>|[^<>\s]+|\s+/g) || [fullHtml];
+        let idx = 0;
+        let currentHtml = '';
+
+        const timer = setInterval(() => {
+          if (idx < tokens.length) {
+            currentHtml += tokens[idx];
+            targetEl.innerHTML = currentHtml;
+            chatBody.scrollTop = chatBody.scrollHeight;
+            idx++;
+          } else {
+            clearInterval(timer);
+            if (onComplete) onComplete();
+          }
+        }, 24);
+      }
+
+      // 7. Local High-Precision Knowledge Engine
+      function getLocalKnowledgeResponse(rawPrompt) {
+        const p = rawPrompt.toLowerCase().trim();
+
+        // Profil & Keahlian
+        if (p.includes('profil') || p.includes('keahlian') || p.includes('skill') || p.includes('latar belakang') || p.includes('siapa raihan') || p.includes('pendidikan') || p.includes('tentang')) {
+          return {
+            text: "<strong>Muhammad Raihan Pasha</strong> adalah Sarjana Terapan Rekayasa Perangkat Lunak (D4 RPL) dari <strong>Politeknik Manufaktur Negeri Bangka Belitung</strong> dengan predikat kelulusan kehormatan <strong>Cumlaude (IPK 3.56)</strong>.<br><br>" +
+                  "Keahlian teknis utama Raihan mencakup:<br>" +
+                  "• <strong>Web & Backend Architecture</strong>: Laravel 11, PHP, REST API, MySQL database indexing & optimasi query, CMS panel.<br>" +
+                  "• <strong>Mobile Programming</strong>: Flutter & Dart (Cross-platform Android) dengan integrasi Midtrans Gateway.<br>" +
+                  "• <strong>Manajemen Data & ETL</strong>: Otomasi Web Scraping berkala, transformasi data mentah, visualisasi Google Looker Studio, dan analisa Excel Keuangan.<br>" +
+                  "• <strong>Infrastruktur Jaringan & Teknis</strong>: Pengujian perangkat lunak (QA), deployment server Nginx/Apache, dan administrasi sistem.",
+            hasWaCta: true,
+            waText: "Halo Raihan, saya tertarik dengan profil dan keahlian Anda, bisakah kita berdiskusi lebih lanjut?"
+          };
+        }
+
+        // Proyek Unggulan
+        if (p.includes('proyek') || p.includes('project') || p.includes('portfolio') || p.includes('portofolio') || p.includes('karya') || p.includes('hasil kerja')) {
+          return {
+            text: "Berikut adalah <strong>5 Proyek Unggulan Terverifikasi</strong> yang dibangun oleh Raihan:<br><br>" +
+                  "1. <strong>SID Desa Air Duren</strong>: Portal informasi digital terpadu & layanan surat online warga (Program Desa Cantik BPS).<br>" +
+                  "2. <strong>Portal GARDA BPS</strong>: Dashboard Business Intelligence eksekutif berbasis Google Looker Studio & database MySQL.<br>" +
+                  "3. <strong>Sistem Web Scraping UMKM Bangka</strong>: Otomasi ekstraksi & ETL data ratusan UMKM di Kab. Bangka secara berkala.<br>" +
+                  "4. <strong>Marketplace Padi Desa Rias</strong>: Platform jual-beli gabah petani terintegrasi Midtrans Payment Gateway & Flutter Mobile.<br>" +
+                  "5. <strong>Website Desa Penyamun</strong>: Portal layanan publik digital dan CMS tata kelola desa.<br><br>" +
+                  "Setiap proyek dapat Anda telaah rincian teknis dan arsitekturnya pada kartu proyek di website ini.",
+            hasWaCta: true,
+            waText: "Halo Raihan, saya terkesan dengan proyek portofolio Anda dan ingin berdiskusi mengenai proyek serupa."
+          };
+        }
+
+        // Layanan & Kolaborasi
+        if (p.includes('layanan') || p.includes('kolaborasi') || p.includes('jasa') || p.includes('kerja sama') || p.includes('kerjasama') || p.includes('bisa bantu') || p.includes('hire') || p.includes('freelance') || p.includes('biaya') || p.includes('harga')) {
+          return {
+            text: "Raihan siap berkolaborasi untuk berbagai solusi perangkat lunak dan manajemen data, antara lain:<br><br>" +
+                  "• <strong>Pengembangan Website Kustom</strong> (Company profile, portal instansi/desa, sistem informasi CMS).<br>" +
+                  "• <strong>Aplikasi Mobile Android</strong> (Flutter cross-platform yang responsif & terhubung REST API).<br>" +
+                  "• <strong>Dashboard Analitik & Visualisasi Data</strong> (Google Looker Studio, BI reporting, automasi data).<br>" +
+                  "• <strong>Web Scraping & Pipeline Data</strong> (Pengumpulan data otomatis terstruktur).<br>" +
+                  "• <strong>Administrasi & Otomasi Excel</strong> (Pengelolaan laporan keuangan & data perkantoran).<br><br>" +
+                  "Mari bicarakan kebutuhan proyek Anda secara langsung dengan Raihan melalui tombol WhatsApp di bawah ini!",
+            hasWaCta: true,
+            waText: "Halo Raihan, saya memiliki rencana proyek/kebutuhan kerja sama dan ingin berkonsultasi langsung."
+          };
+        }
+
+        // Kontak Langsung
+        if (p.includes('kontak') || p.includes('hubungi') || p.includes('email') || p.includes('whatsapp') || p.includes('wa') || p.includes('nomor') || p.includes('telepon')) {
+          return {
+            text: "Anda dapat terhubung langsung dengan <strong>Muhammad Raihan Pasha</strong> melalui saluran resmi berikut:<br><br>" +
+                  "• <strong>WhatsApp</strong>: +62 812-7393-4336 (Respons Cepat)<br>" +
+                  "• <strong>Email</strong>: raihanpasha7500@gmail.com<br>" +
+                  "• <strong>Lokasi</strong>: Bangka, Kepulauan Bangka Belitung (WIB / UTC+7)<br><br>" +
+                  "Klik tombol di bawah untuk langsung membuka percakapan WhatsApp:",
+            hasWaCta: true,
+            waText: "Halo Raihan, saya menghubungi Anda melalui asisten AI website portofolio."
+          };
+        }
+
+        // Sertifikasi & Kredensial
+        if (p.includes('sertifikat') || p.includes('sertifikasi') || p.includes('magang') || p.includes('bps') || p.includes('kemnaker') || p.includes('gnik') || p.includes('excel')) {
+          return {
+            text: "Raihan memiliki <strong>12 Kredensial & Sertifikasi Resmi</strong> terverifikasi, antara lain:<br><br>" +
+                  "• <strong>Magang Resmi BPS Kab. Bangka</strong> (Feb — Juli 2026) di bidang TIK.<br>" +
+                  "• <strong>5 Seri Essential Skills Kemnaker RI & GNIK</strong> (Integrity, Digital Literacy, Adaptability, Self-Efficacy, Emotional Intelligence).<br>" +
+                  "• <strong>Pelatihan Admin Keuangan & Formula Excel</strong> dari Talenesia.<br>" +
+                  "• <strong>Webinar AI & Karya Ilmiah</strong> dari Institute for Advanced Sciences.<br>" +
+                  "• <strong>Kewirausahaan UKM</strong> Poltekkes Denpasar & Pelatihan Internasional Magang Hungaria.<br><br>" +
+                  "Semua dokumen dan fotonya dapat Anda lihat pada konsol <strong>Pendidikan & Sertifikasi</strong>.",
+            hasWaCta: false
+          };
+        }
+
+        // Default Fallback
+        return {
+          text: "Terima kasih atas pertanyaannya! Sebagai asisten pribadi Raihan, saya dapat memberikan informasi komprehensif mengenai <strong>keahlian teknis (Laravel, Flutter, Data)</strong>, <strong>proyek sistem nyata</strong> yang telah dibangun, serta <strong>peluang kolaborasi proyek</strong>.<br><br>" +
+                "Ada yang ingin Anda ketahui lebih lanjut mengenai portofolio Raihan?",
+          hasWaCta: true,
+          waText: "Halo Raihan, saya ingin mendiskusikan peluang proyek dan berdiskusi langsung."
+        };
+      }
+
+      // 8. Gemini API Hook (Optional: Activate with window.GEMINI_API_KEY)
+      async function queryGemini(promptText) {
+        const apiKey = window.GEMINI_API_KEY;
+        if (!apiKey) return null;
+        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+        const systemPrompt = "Anda adalah asisten AI pribadi untuk Muhammad Raihan Pasha di website portofolio resminya. " +
+          "Raihan adalah Sarjana Terapan RPL dari Polman Babel berpredikat Cumlaude (IPK 3.56). " +
+          "Keahlian: Full-Stack Web (Laravel 11, PHP, MySQL), Mobile (Flutter), Data Analytics (Google Looker Studio, Web Scraping ETL), dan Infrastruktur IT. " +
+          "Jawab pertanyaan pengunjung dengan ramah, profesional, cerdas, dan ringkas dalam Bahasa Indonesia.";
+
+        const payload = {
+          contents: [
+            { role: "user", parts: [{ text: systemPrompt + "\\n\\nPertanyaan pengunjung: " + promptText }] }
+          ]
+        };
+
+        const res = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
+          let text = data.candidates[0].content.parts[0].text;
+          text = text.replace(/\\*\\*(.*?)\\*\\*/g, '<strong>$1</strong>');
+          text = text.replace(/\\n\\n/g, '<br><br>').replace(/\\n/g, '<br>');
+          return {
+            text: text,
+            hasWaCta: true,
+            waText: "Halo Raihan, saya berdiskusi dengan asisten AI Anda dan ingin berbicara langsung."
+          };
+        }
+        return null;
+      }
+    })();
+  </script>
 
 
 
