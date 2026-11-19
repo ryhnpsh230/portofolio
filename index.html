@@ -1391,9 +1391,6 @@
     line-height:1.65; color:var(--ink); margin-bottom:16px;
     overflow-x:auto;
   }
-
-
-    /* ---------- EXECUTIVE CREDENTIAL CONSOLE (SPLIT-STAGE DECK) ---------- */
     .cert-hrd-badge {
       display: inline-flex;
       align-items: center;
@@ -1806,58 +1803,54 @@
     }
 
   
-    /* Make card cover clickable */
-    .proj-cover {
-      cursor: pointer;
-    }
-    .proj-cover:hover img {
-      transform: scale(1.04);
-    }
-    .proj-cover img {
-      transition: transform .35s ease;
-    }
-
-    /* Modal Image Showcase Frame */
-    .modal-preview-card {
-      margin: 16px 0 20px 0;
-      border-radius: var(--radius-sm);
+    /* Project Modal Full Image Preview Styles */
+    .proj-modal-preview-box {
+      margin-top: 18px;
+      border-radius: 14px;
       overflow: hidden;
       border: 1px solid var(--line);
-      box-shadow: 0 8px 24px rgba(21, 43, 38, 0.08);
-      background: var(--paper-warm);
+      background: var(--bg);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
     }
-    .modal-preview-img {
+    .proj-modal-preview-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      background: rgba(21, 43, 38, 0.04);
+      border-bottom: 1px solid var(--line);
+    }
+    .proj-modal-preview-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .proj-modal-preview-img-wrap {
       width: 100%;
-      height: 240px;
+      max-height: 380px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0d1a17;
+    }
+    .proj-modal-preview-img-wrap img {
+      width: 100%;
+      height: 100%;
+      max-height: 380px;
       object-fit: cover;
       display: block;
-      transition: transform .4s ease;
+      transition: transform 0.3s ease;
     }
-    .modal-preview-img:hover {
+    .proj-modal-preview-img-wrap:hover img {
       transform: scale(1.02);
     }
-    .modal-preview-caption {
-      padding: 10px 14px;
-      font-size: 12px;
-      color: var(--ink-soft);
-      border-top: 1px solid var(--line);
-      background: var(--paper);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .modal-preview-caption span.badge {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      padding: 2px 8px;
-      border-radius: 9999px;
-      background: rgba(37, 66, 42, 0.08);
-      color: var(--accent-deep);
-      font-weight: 600;
-    }
+
   
-  
-    /* Floating WhatsApp Action Button */
+    /* ================= FLOATING WHATSAPP BUTTON ================= */
     .wa-float {
       position: fixed;
       bottom: 20px;
@@ -1892,6 +1885,547 @@
       display: none;
     }
 
+    /* Desktop Gap in Nav Center for Dynamic Island */
+    @media (min-width: 769px) {
+      .nav-center {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .nav-center a:nth-child(3) {
+        margin-right: 230px;
+      }
+    }
+    @media (max-width: 1100px) and (min-width: 769px) {
+      .nav-center a:nth-child(3) {
+        margin-right: 200px;
+      }
+      .nav-center a {
+        font-size: 11.5px;
+        padding: 4px 5px;
+      }
+    }
+
+    /* ================= LIQUID GLASS DYNAMIC ISLAND ================= */
+    .dynamic-island-wrapper {
+      position: fixed;
+      top: 13px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      pointer-events: none;
+      display: flex;
+      justify-content: center;
+    }
+
+    .dynamic-island {
+      pointer-events: auto;
+      position: relative;
+      background: rgba(21, 43, 38, 0.90);
+      background: linear-gradient(135deg, rgba(37, 66, 42, 0.94) 0%, rgba(21, 43, 38, 0.98) 100%);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(21, 43, 38, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.45);
+      color: #F5F6EF;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      overflow: hidden;
+      box-sizing: border-box;
+
+      /* Compact Pill Dimensions */
+      width: auto;
+      min-width: 208px;
+      max-width: 320px;
+      height: 35px;
+      border-radius: 9999px;
+      padding: 0 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      /* Elastic Spring Transition */
+      transition: width 0.45s cubic-bezier(0.25, 1.4, 0.45, 1),
+                  height 0.45s cubic-bezier(0.25, 1.4, 0.45, 1),
+                  border-radius 0.4s ease,
+                  padding 0.35s ease,
+                  box-shadow 0.3s ease,
+                  background 0.3s ease;
+    }
+
+    /* Specular Light Reflection Arc on Island */
+    .dynamic-island::after {
+      content: '';
+      position: absolute;
+      top: 1px;
+      left: 10px;
+      right: 10px;
+      height: 40%;
+      border-radius: 9999px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 100%);
+      pointer-events: none;
+      opacity: 0.85;
+    }
+
+    /* Hover state on compact */
+    .dynamic-island:not(.is-expanded):hover {
+      transform: scale(1.02);
+      box-shadow: 0 10px 36px rgba(0, 0, 0, 0.42), 0 0 16px rgba(159, 196, 141, 0.35);
+      border-color: rgba(255, 255, 255, 0.35);
+    }
+
+    /* Compact pill layout */
+    .island-compact {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      width: 100%;
+      height: 100%;
+    }
+
+    .island-pulse-box {
+      position: relative;
+      width: 10px;
+      height: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .island-pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #34D399;
+      box-shadow: 0 0 8px #34D399;
+    }
+
+    .island-pulse-ring {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 1.5px solid #34D399;
+      animation: islandPulse 1.8s infinite cubic-bezier(0.24, 0, 0.38, 1);
+    }
+
+    @keyframes islandPulse {
+      0% { transform: scale(0.8); opacity: 1; }
+      100% { transform: scale(2.4); opacity: 0; }
+    }
+
+    .island-compact-content {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      overflow: hidden;
+      white-space: nowrap;
+      padding: 0 2px;
+    }
+
+    .island-status-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      color: #F5F6EF;
+      letter-spacing: -0.01em;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      transition: opacity 0.25s ease;
+    }
+
+    .island-compact-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      opacity: 0.65;
+      transition: transform 0.3s ease, opacity 0.2s ease;
+    }
+
+    .dynamic-island:hover .island-compact-icon {
+      opacity: 1;
+      transform: translateY(1px);
+    }
+
+    .island-chevron {
+      width: 13px;
+      height: 13px;
+      color: #9FC48D;
+    }
+
+    /* Progress Bar at the bottom of compact pill */
+    .island-progress-track {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.12);
+      overflow: hidden;
+    }
+
+    .island-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #9FC48D 0%, #B4823D 100%);
+      border-radius: 9999px;
+      transition: width 0.12s linear;
+      box-shadow: 0 0 6px rgba(159, 196, 141, 0.8);
+    }
+
+    /* ================= EXPANDED CARD MODE ================= */
+    .dynamic-island.is-expanded {
+      width: 340px;
+      max-width: calc(100vw - 28px);
+      height: auto;
+      min-height: 172px;
+      border-radius: 24px;
+      padding: 16px 18px 18px;
+      background: linear-gradient(145deg, rgba(37, 66, 42, 0.97) 0%, rgba(15, 30, 26, 0.99) 100%);
+      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.50), 0 0 0 1px rgba(255, 255, 255, 0.28), inset 0 1.5px 2px rgba(255, 255, 255, 0.6);
+      cursor: default;
+    }
+
+    .dynamic-island.is-expanded .island-compact {
+      display: none !important;
+    }
+
+    .island-expanded {
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .dynamic-island.is-expanded .island-expanded {
+      display: flex !important;
+      animation: islandContentFade 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes islandContentFade {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Expanded Header: Mini Profile & WIB Clock */
+    .island-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+    }
+
+    .island-avatar-box {
+      position: relative;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      border: 1.5px solid rgba(255, 255, 255, 0.35);
+      overflow: visible;
+      background: rgba(37, 66, 42, 0.8);
+    }
+
+    .island-avatar-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .island-avatar-fallback {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: #9FC48D;
+      background: #152B26;
+    }
+
+    .island-online-pip {
+      position: absolute;
+      bottom: 0px;
+      right: 0px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #34D399;
+      border: 2px solid #152B26;
+      box-shadow: 0 0 6px #34D399;
+    }
+
+    .island-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .island-name-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .island-name {
+      font-family: 'Inter', -apple-system, sans-serif;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #FFFFFF;
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .island-badge-role {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 700;
+      background: rgba(180, 130, 61, 0.28);
+      border: 1px solid rgba(180, 130, 61, 0.55);
+      color: #E2B774;
+      padding: 1px 5px;
+      border-radius: 9999px;
+      letter-spacing: 0.02em;
+    }
+
+    .island-sub-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .island-role {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      color: rgba(245, 246, 239, 0.72);
+      white-space: nowrap;
+    }
+
+    .island-clock-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+      color: #9FC48D;
+      background: rgba(159, 196, 141, 0.12);
+      border: 1px solid rgba(159, 196, 141, 0.25);
+      padding: 1px 6px;
+      border-radius: 9999px;
+    }
+
+    .island-clock-icon {
+      width: 10px;
+      height: 10px;
+    }
+
+    .island-close-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #F5F6EF;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.2s ease;
+      padding: 0;
+    }
+
+    .island-close-btn:hover {
+      background: rgba(255, 255, 255, 0.22);
+      color: #FFFFFF;
+      transform: scale(1.08);
+    }
+
+    .island-close-btn svg {
+      width: 13px;
+      height: 13px;
+    }
+
+    /* Context Badge in Expanded Card */
+    .island-context-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0, 0, 0, 0.22);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      padding: 5px 9px;
+    }
+
+    .island-context-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #34D399;
+      box-shadow: 0 0 6px #34D399;
+      flex-shrink: 0;
+    }
+
+    .island-context-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: #E6EADE;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* 3 Quick Action Buttons Grid */
+    .island-actions-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      width: 100%;
+    }
+
+    .island-action-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 10px 6px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2), 0 3px 10px rgba(0, 0, 0, 0.15);
+      color: #FFFFFF;
+      text-decoration: none;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.22s cubic-bezier(0.25, 1.4, 0.45, 1);
+      box-sizing: border-box;
+    }
+
+    .island-action-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.35);
+      transform: translateY(-2px);
+      box-shadow: inset 0 1px 1.5px rgba(255, 255, 255, 0.4), 0 6px 16px rgba(0, 0, 0, 0.25);
+      color: #FFFFFF;
+    }
+
+    .island-action-btn:active {
+      transform: scale(0.96);
+    }
+
+    .island-action-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .island-action-icon svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    /* WhatsApp action styling */
+    .island-action-wa .island-action-icon {
+      background: rgba(37, 211, 102, 0.2);
+      color: #25D366;
+    }
+
+    .island-action-wa:hover .island-action-icon {
+      background: #25D366;
+      color: #FFFFFF;
+    }
+
+    /* Email action styling */
+    .island-action-email .island-action-icon {
+      background: rgba(180, 130, 61, 0.2);
+      color: #E2B774;
+    }
+
+    .island-action-email:hover .island-action-icon {
+      background: #B4823D;
+      color: #FFFFFF;
+    }
+
+    /* CV action styling */
+    .island-action-cv .island-action-icon {
+      background: rgba(159, 196, 141, 0.2);
+      color: #9FC48D;
+    }
+
+    .island-action-cv:hover .island-action-icon {
+      background: #9FC48D;
+      color: #152B26;
+    }
+
+    /* Email Copied Active State */
+    .island-action-email.is-copied {
+      background: rgba(52, 211, 153, 0.25) !important;
+      border-color: rgba(52, 211, 153, 0.6) !important;
+      box-shadow: 0 0 16px rgba(52, 211, 153, 0.45) !important;
+    }
+
+    .island-action-email.is-copied .island-action-icon {
+      background: #34D399 !important;
+      color: #152B26 !important;
+      transform: scale(1.1);
+    }
+
+    .island-action-email.is-copied .island-action-title {
+      color: #34D399 !important;
+      font-weight: 700;
+    }
+
+    .island-action-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1px;
+    }
+
+    .island-action-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: #FFFFFF;
+      white-space: nowrap;
+      transition: color 0.2s ease;
+    }
+
+    .island-action-subtitle {
+      font-family: 'Inter', sans-serif;
+      font-size: 8px;
+      color: rgba(245, 246, 239, 0.65);
+      white-space: nowrap;
+      max-width: 82px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: color 0.2s ease;
+    }
+
     /* ================= MOBILE FLOATING NAVBAR (MAX-WIDTH: 768PX) ================= */
     @media (max-width: 768px) {
       /* Jarak Aman Konten Paling Bawah Halaman */
@@ -1900,6 +2434,11 @@
       }
       footer#contact {
         padding-bottom: 104px;
+      }
+
+      /* Jarak Aman Hero di Mobile agar tidak tertutup Dynamic Island */
+      .hero {
+        padding-top: 58px !important;
       }
 
       /* Geser Posisi Floating WhatsApp Button & Back to Top ke Atas (bottom: 84px) */
@@ -2076,6 +2615,24 @@
         color: #F5F6EF;
       }
 
+      /* Adaptasi Dynamic Island di Layar HP */
+      .dynamic-island-wrapper {
+        top: 10px;
+      }
+      .dynamic-island {
+        max-width: calc(100vw - 24px);
+        height: 33px;
+        padding: 0 12px;
+      }
+      .island-status-badge {
+        font-size: 10px;
+        max-width: 170px;
+      }
+      .island-chevron {
+        width: 11px;
+        height: 11px;
+      }
+
       /* Adaptasi Layar Sangat Sempit (<= 360px) */
       @media (max-width: 360px) {
         .nav {
@@ -2109,6 +2666,20 @@
           bottom: 78px;
           right: 64px;
         }
+        .dynamic-island {
+          min-width: 190px;
+          padding: 0 10px;
+        }
+        .island-status-badge {
+          font-size: 9.5px;
+          max-width: 145px;
+        }
+        .island-action-title {
+          font-size: 9px;
+        }
+        .island-action-subtitle {
+          font-size: 7.5px;
+        }
       }
     }
 
@@ -2132,6 +2703,113 @@
   </button>
 
   <!-- ================= TOP NAVIGATION (CLEAN, TIDAK NABRAK) ================= -->
+  <!-- ================= DYNAMIC ISLAND (LIQUID GLASS FLOATING PILL / EXPANDED CARD) ================= -->
+  <div class="dynamic-island-wrapper" id="dynamicIslandWrapper">
+    <div class="dynamic-island" id="dynamicIsland" role="region" aria-label="Dynamic Island Status & Quick Actions" aria-expanded="false">
+      
+      <!-- 1. COMPACT PILL (MODE STANDAR) -->
+      <div class="island-compact" id="islandCompact" title="Klik untuk membuka menu cepat">
+        <div class="island-pulse-box">
+          <span class="island-pulse-dot"></span>
+          <span class="island-pulse-ring"></span>
+        </div>
+        <div class="island-compact-content">
+          <span class="island-status-badge" id="islandStatusBadge">Available for Projects</span>
+        </div>
+        <div class="island-compact-icon">
+          <svg class="island-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+        <!-- Progress Bar Halus di Bagian Bawah Kapsul -->
+        <div class="island-progress-track">
+          <div class="island-progress-bar" id="islandProgressBar"></div>
+        </div>
+      </div>
+
+      <!-- 2. EXPANDED CARD (SAAT DIKLIK / TAP) -->
+      <div class="island-expanded" id="islandExpanded">
+        <!-- Header: Mini Profile & Real-Time WIB Clock -->
+        <div class="island-header">
+          <div class="island-avatar-box">
+            <img src="foto.jpeg" alt="Muhammad Raihan Pasha" class="island-avatar-img" onerror="this.style.display='none'; document.getElementById('islandAvatarFallback').style.display='flex';" />
+            <div class="island-avatar-fallback" id="islandAvatarFallback">RP</div>
+            <span class="island-online-pip"></span>
+          </div>
+          <div class="island-meta">
+            <div class="island-name-row">
+              <span class="island-name">Muhammad Raihan Pasha</span>
+              <span class="island-badge-role">Pro</span>
+            </div>
+            <div class="island-sub-row">
+              <span class="island-role">Full-Stack Dev &bull; Data Analyst</span>
+              <span class="island-clock-pill" id="islandClockPill" title="Waktu Nyata WIB (UTC+7)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="island-clock-icon"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span id="islandLiveClock">08:00:00 WIB</span>
+              </span>
+            </div>
+          </div>
+          <button class="island-close-btn" id="islandCloseBtn" aria-label="Tutup Dynamic Island" title="Tutup">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+
+        <!-- Reading Context Badge in Expanded Card -->
+        <div class="island-context-pill">
+          <span class="island-context-dot"></span>
+          <span class="island-context-label" id="islandContextLabel">Membaca: Beranda</span>
+        </div>
+
+        <!-- 3 Quick Action Buttons -->
+        <div class="island-actions-grid">
+          <!-- 1. WhatsApp Button: Teks Otomatis Menyesuaikan Section -->
+          <a href="https://wa.me/6281273934336?text=Halo%20Raihan,%20saya%20tertarik%20untuk%20berdiskusi%20mengenai%20peluang%20proyek%20baru." target="_blank" rel="noopener noreferrer" class="island-action-btn island-action-wa" id="islandWaBtn">
+            <div class="island-action-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.888 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+              </svg>
+            </div>
+            <div class="island-action-info">
+              <span class="island-action-title">WhatsApp</span>
+              <span class="island-action-subtitle" id="islandWaSubtitle">Chat Proyek</span>
+            </div>
+          </a>
+
+          <!-- 2. Copy Email Button: Notifikasi Centang 'Email Copied!' Selama 2 Detik -->
+          <button type="button" class="island-action-btn island-action-email" id="islandCopyEmailBtn" title="Salin Email">
+            <div class="island-action-icon" id="islandEmailIcon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+            </div>
+            <div class="island-action-info">
+              <span class="island-action-title" id="islandEmailTitle">Copy Email</span>
+              <span class="island-action-subtitle" id="islandEmailSubtitle">raihanpasha7500@...</span>
+            </div>
+          </button>
+
+          <!-- 3. Download CV / Portfolio Button -->
+          <a href="CV_Muhammad_Raihan_Pasha.pdf" download="CV_Muhammad_Raihan_Pasha.pdf" target="_blank" rel="noopener noreferrer" class="island-action-btn island-action-cv" id="islandCvBtn" title="Unduh Curriculum Vitae & Portofolio">
+            <div class="island-action-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+            </div>
+            <div class="island-action-info">
+              <span class="island-action-title">Download CV</span>
+              <span class="island-action-subtitle">PDF Resume</span>
+            </div>
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
   <!-- ================= NAVIGATION (DESKTOP TOP STICKY / MOBILE FLOATING BOTTOM DOCK) ================= -->
   <nav class="nav" id="mainNav">
     <!-- Desktop Top Navbar Container -->
@@ -2151,7 +2829,7 @@
         </div>
       </div>
 
-      <!-- Center Links - Single Line -->
+      <!-- Center Links - Single Line (with center gap for Dynamic Island on Desktop) -->
       <div class="nav-center">
         <a href="#about">Tentang</a>
         <a href="#experience">Pengalaman</a>
@@ -2747,250 +3425,29 @@
         </div>
       </div>
 
-            <!-- Category Filter Bar for Certificates -->
-      <div class="cert-filter-bar reveal">
-        <button class="cert-filter-pill active" onclick="filterCerts('all')">Semua Dokumen (12)</button>
-        <button class="cert-filter-pill" onclick="filterCerts('tik')">TIK & Digital (6)</button>
-        <button class="cert-filter-pill" onclick="filterCerts('bisnis')">Bisnis & Manajemen (5)</button>
-        <button class="cert-filter-pill" onclick="filterCerts('akademik')">Predikat Akademik (1)</button>
-      </div>
-
-      <!-- Executive Credential Split-Stage Deck Console -->
-      <div class="cert-deck-container reveal">
-        <!-- Left Pane: Interactive Document Selector List -->
-        <div class="cert-list-pane" id="certListPane">
-
-          <!-- 01: Kemnaker & GNIK - Integrity at Work -->
-          <div class="cert-row-item active" data-cert="kemnaker-integrity" data-category="tik" onclick="selectCert('kemnaker-integrity')" ondblclick="openCertModal('kemnaker-integrity')" title="Klik untuk pratinjau langsung, klik ganda untuk rincian penuh">
-            <span class="cert-row-num">01</span>
-            <div class="cert-row-main">
-              <div class="cert-row-meta">
-                <span class="cert-row-issuer">GNIK × KEMNAKER RI • 2026</span>
-                <span class="cert-row-pill">TIK & Etika</span>
-              </div>
-              <h4 class="cert-row-title">Essential Skills: Integrity at Work</h4>
-            </div>
-            <div class="cert-row-action" onclick="event.stopPropagation(); openCertModal('kemnaker-integrity');" title="Buka Rincian & Sertifikat Penuh">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            </div>
+      <!-- Training & Certification Official Cards -->
+      <div class="cert-grid reveal">
+        <div class="cert-card">
+          <div>
+            <div class="cert-tag">TALENESIA &bull; AGUSTUS 2026</div>
+            <h4>Pelatihan Admin Keuangan: Excel Lanjutan</h4>
+            <p>Menguasai rumus dan teknik dasar hingga lanjutan Excel untuk penyusunan laporan keuangan dan otomasi administrasi.</p>
           </div>
-
-          <!-- 02: Kemnaker & GNIK - Digital Literacy -->
-          <div class="cert-row-item" data-cert="kemnaker-digital" data-category="tik" onclick="selectCert('kemnaker-digital')" ondblclick="openCertModal('kemnaker-digital')" title="Klik untuk pratinjau langsung, klik ganda untuk rincian penuh">
-            <span class="cert-row-num">02</span>
-            <div class="cert-row-main">
-              <div class="cert-row-meta">
-                <span class="cert-row-issuer">GNIK × KEMNAKER RI • 2026-2027</span>
-                <span class="cert-row-pill">Literasi Digital</span>
-              </div>
-              <h4 class="cert-row-title">Essential Skills: Digital Literacy</h4>
-            </div>
-            <div class="cert-row-action" onclick="event.stopPropagation(); openCertModal('kemnaker-digital');" title="Buka Rincian & Sertifikat Penuh">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            </div>
-          </div>
-
-          <!-- 03: Kemnaker & GNIK - Adaptability -->
-          <div class="cert-row-item" data-cert="kemnaker-adaptability" data-category="tik" onclick="selectCert('kemnaker-adaptability')" ondblclick="openCertModal('kemnaker-adaptability')" title="Klik untuk pratinjau langsung, klik ganda untuk rincian penuh">
-            <span class="cert-row-num">03</span>
-            <div class="cert-row-main">
-              <div class="cert-row-meta">
-                <span class="cert-row-issuer">GNIK × KEMNAKER RI • 2026</span>
-                <span class="cert-row-pill">TIK & Agile</span>
-              </div>
-              <h4 class="cert-row-title">Essential Skills: Adaptability</h4>
-            </div>
-            <div class="cert-row-action" onclick="event.stopPropagation(); openCertModal('kemnaker-adaptability');" title="Buka Rincian & Sertifikat Penuh">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            </div>
-          </div>
-
-          <!-- 04: Kemnaker & GNIK - Self Efficacy -->
-          <div class="cert-row-item" data-cert="kemnaker-self-efficacy" data-category="bisnis" onclick="selectCert('kemnaker-self-efficacy')" ondblclick="openCertModal('kemnaker-self-efficacy')" title="Klik untuk pratinjau langsung, klik ganda untuk rincian penuh">
-            <span class="cert-row-num">04</span>
-            <div class="cert-row-main">
-              <div class="cert-row-meta">
-                <span class="cert-row-issuer">GNIK × KEMNAKER RI • 2026-2027</span>
-                <span class="cert-row-pill">Bisnis & Kinerja</span>
-              </div>
-              <h4 class="cert-row-title">Essential Skills: Self Efficacy</h4>
-            </div>
-            <div class="cert-row-action" onclick="event.stopPropagation(); openCertModal('kemnaker-self-efficacy');" title="Buka Rincian & Sertifikat Penuh">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            </div>
-          </div>
-
-          <!-- 05: Kemnaker & GNIK - Emotional Intelligence -->
-          <div class="cert-row-item" data-cert="kemnaker-emotional" data-category="bisnis" onclick="selectCert('kemnaker-emotional')" ondblclick="openCertModal('kemnaker-emotional')" title="Klik untuk pratinjau langsung, klik ganda untuk rincian penuh">
-            <span class="cert-row-num">05</span>
-            <div class="cert-row-main">
-              <div class="cert-row-meta">
-                <span class="cert-row-issuer">GNIK × KEMNAKER RI • 2026-2027</span>
-                <span class="cert-row-pill">Komunikasi & EQ</span>
-              </div>
-              <h4 class="cert-row-title">Essential Skills: Emotional Intelligence</h4>
-            </div>
-            <div class="cert-row-action" onclick="event.stopPropagation(); openCertModal('kemnaker-emotional');" title="Buka Rincian & Sertifikat Penuh">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            </div>
-          </div>
-
-          <!-- 06: Talenesia Excel -->
-          <div class="cert-row-item" data-cert="talenesia-excel" data-category="bisnis" onclick="selectCert('talenesia-excel')" ondblclick="openCertModal('talenesia-excel')" title="Klik untuk pratinjau langsung, klik ganda untuk rincian penuh">
-            <span class="cert-row-num">06</span>
-            <div class="cert-row-main">
-              <div class="cert-row-meta">
-                <span class="cert-row-issuer">TALENESIA • AGUSTUS 2026</span>
-                <span class="cert-row-pill">Keuangan & Excel</span>
-              </div>
-              <h4 class="cert-row-title">Pelatihan Admin Keuangan: Excel Lanjutan</h4>
-            </div>
-            <div class="cert-row-action" onclick="event.stopPropagation(); openCertModal('talenesia-excel');" title="Buka Rincian & Sertifikat Penuh">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            </div>
-          </div>
-
-          <!-- 07: Institute AI -->
-          <div class="cert-row-item" data-cert="ias-ai" data-category="tik" onclick="selectCert('ias-ai')" ondblclick="openCertModal('ias-ai')" title="Klik untuk pratinjau langsung, klik ganda untuk rincian penuh">
-            <span class="cert-row-num">07</span>
-            <div class="cert-row-main">
-              <div class="cert-row-meta">
-                <span class="cert-row-issuer">INSTITUTE ADVANCED SCIENCES • 2026</span>
-                <span class="cert-row-pill">Artificial Intelligence</span>
-              </div>
-              <h4 class="cert-row-title">Webinar AI & Karya Ilmiah: Kawan / Lawan?</h4>
-            </div>
-            <div class="cert-row-action" onclick="event.stopPropagation(); openCertModal('ias-ai');" title="Buka Rincian & Sertifikat Penuh">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            </div>
-          </div>
-
-          <!-- 08: BPS Bangka Magang -->
-          <div class="cert-row-item" data-cert="bps-magang" data-category="tik" onclick="selectCert('bps-magang')" ondblclick="openCertModal('bps-magang')" title="Klik untuk pratinjau langsung, klik ganda untuk rincian penuh">
-            <span class="cert-row-num">08</span>
-            <div class="cert-row-main">
-              <div class="cert-row-meta">
-                <span class="cert-row-issuer">BPS KABUPATEN BANGKA • 2026</span>
-                <span class="cert-row-pill">Magang TIK</span>
-              </div>
-              <h4 class="cert-row-title">Sertifikat Magang BPS Kabupaten Bangka</h4>
-            </div>
-            <div class="cert-row-action" onclick="event.stopPropagation(); openCertModal('bps-magang');" title="Buka Rincian & Sertifikat Penuh">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            </div>
-          </div>
-
-          <!-- 09: Poltekkes Kewirausahaan -->
-          <div class="cert-row-item" data-cert="poltekkes-ukm" data-category="bisnis" onclick="selectCert('poltekkes-ukm')" ondblclick="openCertModal('poltekkes-ukm')" title="Klik untuk pratinjau langsung, klik ganda untuk rincian penuh">
-            <span class="cert-row-num">09</span>
-            <div class="cert-row-main">
-              <div class="cert-row-meta">
-                <span class="cert-row-issuer">POLTEKKES DENPASAR • SEPT 2025</span>
-                <span class="cert-row-pill">Wirausaha UKM</span>
-              </div>
-              <h4 class="cert-row-title">Webinar Nasional UKM: Wirausaha Mandiri</h4>
-            </div>
-            <div class="cert-row-action" onclick="event.stopPropagation(); openCertModal('poltekkes-ukm');" title="Buka Rincian & Sertifikat Penuh">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            </div>
-          </div>
-
-          <!-- 10: Polman Panitia Matematika -->
-          <div class="cert-row-item" data-cert="polman-panitia" data-category="bisnis" onclick="selectCert('polman-panitia')" ondblclick="openCertModal('polman-panitia')" title="Klik untuk pratinjau langsung, klik ganda untuk rincian penuh">
-            <span class="cert-row-num">10</span>
-            <div class="cert-row-main">
-              <div class="cert-row-meta">
-                <span class="cert-row-issuer">POLMAN BABEL • JUNI 2023</span>
-                <span class="cert-row-pill">Kepanitiaan</span>
-              </div>
-              <h4 class="cert-row-title">Panitia Lomba Nalaria Matematika Student-E</h4>
-            </div>
-            <div class="cert-row-action" onclick="event.stopPropagation(); openCertModal('polman-panitia');" title="Buka Rincian & Sertifikat Penuh">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            </div>
-          </div>
-
-          <!-- 11: Polman Magang Hungaria -->
-          <div class="cert-row-item" data-cert="polman-hungaria" data-category="tik" onclick="selectCert('polman-hungaria')" ondblclick="openCertModal('polman-hungaria')" title="Klik untuk pratinjau langsung, klik ganda untuk rincian penuh">
-            <span class="cert-row-num">11</span>
-            <div class="cert-row-main">
-              <div class="cert-row-meta">
-                <span class="cert-row-issuer">POLMAN BABEL • MARET 2023</span>
-                <span class="cert-row-pill">Magang Global</span>
-              </div>
-              <h4 class="cert-row-title">Webinar: Program Magang di Hungaria</h4>
-            </div>
-            <div class="cert-row-action" onclick="event.stopPropagation(); openCertModal('polman-hungaria');" title="Buka Rincian & Sertifikat Penuh">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            </div>
-          </div>
-
-          <!-- 12: Polman Babel Cumlaude -->
-          <div class="cert-row-item" data-cert="polman-cumlaude" data-category="akademik" onclick="selectCert('polman-cumlaude')" ondblclick="openCertModal('polman-cumlaude')" title="Klik untuk pratinjau langsung, klik ganda untuk rincian penuh">
-            <span class="cert-row-num">12</span>
-            <div class="cert-row-main">
-              <div class="cert-row-meta">
-                <span class="cert-row-issuer" style="color:#B4823D;">POLMAN NEGERI BABEL • 2026</span>
-                <span class="cert-row-pill" style="color:#B4823D; border-color:rgba(180,130,61,0.4); font-weight:800;">CUMLAUDE ★</span>
-              </div>
-              <h4 class="cert-row-title" style="color:#25422A;">Piagam Predikat Kelulusan Dengan Pujian</h4>
-            </div>
-            <div class="cert-row-action" onclick="event.stopPropagation(); openCertModal('polman-cumlaude');" title="Buka Rincian & Piagam Penuh">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            </div>
-          </div>
-
         </div>
 
-        <!-- Right Pane: Live Document Preview Stage (Compact) -->
-        <div class="cert-preview-pane">
-          <!-- =======================================================================
-               GANTI URL FOTO SERTIFIKAT DI SINI:
-               - GNIK Integrity at Work: sertifikat-integrity.jpg
-               - GNIK Digital Literacy: sertifikat-digital-literacy.jpg
-               - GNIK Adaptability: sertifikat-adaptability.jpg
-               - GNIK Self Efficacy: sertifikat-self-efficacy.jpg
-               - GNIK Emotional Intelligence: sertifikat-emotional-intelligence.jpg
-               - Pelatihan Excel Talenesia: sertifikat-excel.jpg
-               - Webinar AI: sertifikat-ai.jpg
-               - Magang BPS Bangka: sertifikat-magang-bps.jpg
-               - Webinar UKM Poltekkes: sertifikat-wirausaha.jpg
-               - Panitia Lomba Matematika: sertifikat-panitia-matematika.jpg
-               - Webinar Magang Hungaria: sertifikat-magang-hungaria.jpg
-               - Piagam Kelulusan Cumlaude: sertifikat-cumlaude.jpg
-          ======================================================================== -->
-          <div class="cert-live-frame" id="certLiveFrame" onclick="openCertModal(currentSelectedCert)" title="Klik untuk memperbesar dokumen dan membaca rincian lengkap">
-            <img id="certStageImg" class="cert-live-img" src="sertifikat-integrity.jpg" alt="Pratinjau Sertifikat Resmi" onerror="this.style.display='none'; document.getElementById('certStageFallback').style.display='flex';" loading="lazy">
-            <div class="cert-stage-fallback" id="certStageFallback">
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span id="certFbIssuer" style="font-family:'JetBrains Mono',monospace; font-size:9.5px; font-weight:700; color:var(--ink-soft); letter-spacing:0.04em;">GNIK × KEMNAKER RI</span>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="#B4823D"><path d="M12 2l2.4 5.2 5.6.8-4 4 1 5.6-5-2.8-5 2.8 1-5.6-4-4 5.6-.8z"/></svg>
-              </div>
-              <div style="margin:4px 0;">
-                <div style="font-family:'JetBrains Mono',monospace; font-size:8.5px; color:var(--ink-faint); text-transform:uppercase;">Kredensial Terverifikasi</div>
-                <div id="certFbName" style="font-family:'Fraunces',serif; font-size:14px; font-weight:600; color:var(--accent-deep); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Essential Skills: Integrity at Work</div>
-              </div>
-              <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(219,221,203,0.6); padding-top:4px; font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--ink-faint);">
-                <span>Penerima: M. Raihan Pasha</span>
-                <span style="color:var(--accent); font-weight:700;">✓ Terverifikasi Resmi</span>
-              </div>
-            </div>
-            <div class="cert-stage-overlay">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-              <span>Perbesar & Rincian Lengkap</span>
-            </div>
+        <div class="cert-card">
+          <div>
+            <div class="cert-tag">INSTITUTE FOR ADVANCED SCIENCES &bull; 2026</div>
+            <h4>Webinar AI & Karya Ilmiah</h4>
+            <p>Sertifikat webinar nasional mengenai integrasi etis dan teknis Artificial Intelligence dalam metodologi riset ilmiah.</p>
           </div>
+        </div>
 
-          <!-- Stage Bottom Status & Trigger -->
-          <div class="cert-stage-footer">
-            <div class="cert-stage-info">
-              <div class="cert-stage-badge" id="certStageBadge">GNIK × KEMNAKER RI • OKTOBER 2026</div>
-              <div class="cert-stage-issuer" id="certStageIssuer">Gerakan Nasional Indonesia Kompeten × Kemnaker RI</div>
-            </div>
-            <button class="cert-stage-btn" onclick="openCertModal(currentSelectedCert)" title="Buka rincian kompetensi dan pratinjau penuh">
-              <span>Buka Dokumen</span>
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            </button>
+        <div class="cert-card">
+          <div>
+            <div class="cert-tag">POLTEKKES DENPASAR &bull; 2025</div>
+            <h4>Webinar Nasional Kewirausahaan UKM</h4>
+            <p>Membentuk jiwa wirausaha muda yang mandiri, kreatif, dan inovatif di era persaingan global dan digitalisasi UMKM.</p>
           </div>
         </div>
       </div>
@@ -3196,14 +3653,6 @@
     <div class="modal-window">
       <button class="modal-close" onclick="closeProjectModal()">&times;</button>
       <div id="modalContent"></div>
-    </div>
-  </div>
-
-  <!-- ================= CERTIFICATE LIGHTBOX SHOWCASE MODAL ================= -->
-  <div class="modal-backdrop" id="certModal">
-    <div class="modal-window">
-      <button class="modal-close" onclick="closeCertModal()">&times;</button>
-      <div id="certModalContent"></div>
     </div>
   </div>
 
@@ -4473,12 +4922,305 @@
   </script>
 
 
-  <!-- Floating WhatsApp Quick Connect Button -->
-  <a href="https://wa.me/6281273934336" target="_blank" rel="noopener noreferrer" class="wa-float" id="waFloat" title="Chat via WhatsApp">
+  <!-- Certificate Image Modal Backdrop -->
+  <div class="cert-modal-backdrop" id="certModalBackdrop" onclick="closeCertModal(event)">
+    <div class="cert-modal-card" onclick="event.stopPropagation()">
+      <div class="cert-modal-header">
+        <div class="cert-modal-title-box">
+          <span class="cert-modal-badge" id="certModalBadge">Kredensial Resmi</span>
+          <h4 class="cert-modal-title" id="certModalTitle">Nama Sertifikat</h4>
+          <p class="cert-modal-sub" id="certModalIssuer">Penerbit &bull; Tanggal</p>
+        </div>
+        <button class="cert-modal-close" onclick="closeCertModal()" aria-label="Tutup Pratinjau">&times;</button>
+      </div>
+      <div class="cert-modal-img-wrap">
+        <img src="" alt="Pratinjau Sertifikat" id="certModalImg" />
+      </div>
+      <div class="cert-modal-footer">
+        <div class="cert-modal-meta">
+          <span class="cert-meta-tag" id="certModalCategory">Kategori</span>
+          <span class="cert-meta-verify">&#10003; Terverifikasi</span>
+        </div>
+        <a href="#" target="_blank" class="cert-modal-fullbtn" id="certModalOpenFull">
+          <span>Buka Ukuran Penuh</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Floating WhatsApp Action Button -->
+  <a href="https://wa.me/6281273934336?text=Halo%20Raihan,%20saya%20tertarik%20untuk%20berdiskusi%20mengenai%20peluang%20proyek%20baru." target="_blank" rel="noopener noreferrer" class="wa-float" id="waFloatBtn" title="Chat via WhatsApp" aria-label="Chat WhatsApp">
     <svg viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 14.99 3.8 13.47 3.8 11.91C3.81 7.37 7.5 3.67 12.05 3.67M9.11 7.43C8.94 7.43 8.68 7.5 8.44 7.76C8.21 8.02 7.56 8.63 7.56 9.87C7.56 11.12 8.47 12.32 8.6 12.5C8.73 12.67 10.4 15.25 12.96 16.35C13.57 16.61 14.04 16.77 14.41 16.89C15.02 17.08 15.58 17.05 16.02 16.99C16.51 16.92 17.54 16.37 17.75 15.77C17.97 15.16 17.97 14.65 17.9 14.54C17.84 14.43 17.67 14.37 17.41 14.24C17.15 14.11 15.89 13.49 15.65 13.4C15.42 13.31 15.25 13.27 15.08 13.53C14.91 13.79 14.42 14.37 14.27 14.54C14.12 14.71 13.97 14.73 13.71 14.6C13.45 14.47 12.62 14.2 11.63 13.32C10.86 12.63 10.34 11.78 10.19 11.52C10.04 11.26 10.17 11.13 10.3 11C10.42 10.88 10.56 10.7 10.7 10.54C10.83 10.37 10.87 10.24 10.96 10.07C11.05 9.9 11 9.75 10.94 9.62C10.87 9.5 10.36 8.24 10.15 7.73C9.94 7.23 9.73 7.3 9.58 7.29C9.43 7.29 9.26 7.29 9.11 7.29V7.43Z"/>
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.888 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
     </svg>
   </a>
+
+
+
+  <!-- ================= DYNAMIC ISLAND INTERACTIVE JAVASCRIPT ================= -->
+  <script id="dynamicIslandScript">
+    (function initDynamicIsland() {
+      const island = document.getElementById('dynamicIsland');
+      const compactView = document.getElementById('islandCompact');
+      const statusBadge = document.getElementById('islandStatusBadge');
+      const progressBar = document.getElementById('islandProgressBar');
+      const closeBtn = document.getElementById('islandCloseBtn');
+      const liveClock = document.getElementById('islandLiveClock');
+      const contextLabel = document.getElementById('islandContextLabel');
+      const waBtn = document.getElementById('islandWaBtn');
+      const waSubtitle = document.getElementById('islandWaSubtitle');
+      const copyEmailBtn = document.getElementById('islandCopyEmailBtn');
+      const emailTitle = document.getElementById('islandEmailTitle');
+      const emailSubtitle = document.getElementById('islandEmailSubtitle');
+      const emailIcon = document.getElementById('islandEmailIcon');
+      const waFloatBtn = document.getElementById('waFloatBtn');
+
+      if (!island || !compactView) return;
+
+      // 1. Expand / Collapse Mechanics
+      function expandIsland() {
+        if (!island.classList.contains('is-expanded')) {
+          island.classList.add('is-expanded');
+          island.setAttribute('aria-expanded', 'true');
+        }
+      }
+
+      function collapseIsland() {
+        if (island.classList.contains('is-expanded')) {
+          island.classList.remove('is-expanded');
+          island.setAttribute('aria-expanded', 'false');
+        }
+      }
+
+      compactView.addEventListener('click', function (e) {
+        e.stopPropagation();
+        expandIsland();
+      });
+
+      if (closeBtn) {
+        closeBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          collapseIsland();
+        });
+      }
+
+      // Auto-collapse when clicking outside
+      document.addEventListener('click', function (e) {
+        if (!island.contains(e.target)) {
+          collapseIsland();
+        }
+      });
+
+      // Collapse on Escape
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' || e.key === 'Esc') {
+          collapseIsland();
+        }
+      });
+
+      // Prevent card clicks from collapsing
+      island.addEventListener('click', function (e) {
+        e.stopPropagation();
+      });
+
+      // 2. Real-Time WIB Clock
+      function updateLiveClock() {
+        try {
+          const now = new Date();
+          const timeStr = now.toLocaleTimeString('id-ID', {
+            timeZone: 'Asia/Jakarta',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+          });
+          if (liveClock) liveClock.textContent = timeStr.replace(/\./g, ':') + ' WIB';
+        } catch (err) {
+          const now = new Date();
+          const h = String(now.getHours()).padStart(2, '0');
+          const m = String(now.getMinutes()).padStart(2, '0');
+          const s = String(now.getSeconds()).padStart(2, '0');
+          if (liveClock) liveClock.textContent = h + ':' + m + ':' + s + ' WIB';
+        }
+      }
+      updateLiveClock();
+      setInterval(updateLiveClock, 1000);
+
+      // 3. Dynamic Section Spy & Progress Bar
+      const sectionData = [
+        {
+          id: 'hero',
+          name: 'Beranda',
+          badge: 'Available for Projects',
+          waSubtitle: 'Chat Proyek',
+          waMessage: 'Halo Raihan, saya melihat portofolio Anda dan tertarik untuk berdiskusi mengenai peluang proyek baru.'
+        },
+        {
+          id: 'about',
+          name: 'Tentang',
+          badge: 'Membaca: Tentang',
+          waSubtitle: 'Profil & Karir',
+          waMessage: 'Halo Raihan, saya tertarik dengan profil dan latar belakang Anda di bidang Full-Stack & Data.'
+        },
+        {
+          id: 'experience',
+          name: 'Pengalaman',
+          badge: 'Membaca: Pengalaman',
+          waSubtitle: 'Pengalaman Kerja',
+          waMessage: 'Halo Raihan, saya melihat pengalaman kerja Anda dan ingin membahas peluang kolaborasi/posisi.'
+        },
+        {
+          id: 'projects',
+          name: 'Proyek',
+          badge: 'Membaca: Proyek',
+          waSubtitle: 'Diskusi Proyek',
+          waMessage: 'Halo Raihan, saya terkesan dengan proyek portofolio yang Anda kembangkan dan ingin berdiskusi lebih lanjut.'
+        },
+        {
+          id: 'why',
+          name: 'Kolaborasi Tim',
+          badge: 'Membaca: Kolaborasi',
+          waSubtitle: 'Kolaborasi Tim',
+          waMessage: 'Halo Raihan, saya mengapresiasi cara kerja dan kolaborasi tim Anda, mari diskusikan peluang proyek bersama.'
+        },
+        {
+          id: 'education',
+          name: 'Pendidikan & Sertifikasi',
+          badge: 'Membaca: Sertifikasi',
+          waSubtitle: 'Kredensial & IT',
+          waMessage: 'Halo Raihan, saya melihat sertifikasi dan kredensial kompetensi Anda di bidang IT dan Manajemen.'
+        },
+        {
+          id: 'skills',
+          name: 'Keahlian',
+          badge: 'Membaca: Keahlian',
+          waSubtitle: 'Tech Stack',
+          waMessage: 'Halo Raihan, saya tertarik dengan keahlian teknis Anda dan ingin mendiskusikan kebutuhan project kami.'
+        },
+        {
+          id: 'contact',
+          name: 'Kontak',
+          badge: 'Membaca: Kontak',
+          waSubtitle: 'Kirim Pesan',
+          waMessage: 'Halo Raihan, saya ingin terhubung dan mengirim pesan langsung untuk kerja sama.'
+        }
+      ];
+
+      let currentSectionId = 'hero';
+
+      function onScrollUpdate() {
+        const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+
+        // Progress Bar Calculation
+        if (progressBar && docHeight > 0) {
+          const pct = Math.min(100, Math.max(0, (scrollY / docHeight) * 100));
+          progressBar.style.width = pct + '%';
+        }
+
+        // Active Section Detection
+        let activeItem = sectionData[0];
+
+        if (scrollY < 120) {
+          activeItem = sectionData[0];
+        } else {
+          const probeY = scrollY + (window.innerHeight * 0.35);
+          for (let i = sectionData.length - 1; i >= 0; i--) {
+            const el = document.getElementById(sectionData[i].id);
+            if (el) {
+              const top = el.offsetTop;
+              if (probeY >= top - 80) {
+                activeItem = sectionData[i];
+                break;
+              }
+            }
+          }
+        }
+
+        if (activeItem.id !== currentSectionId || scrollY < 120) {
+          currentSectionId = activeItem.id;
+
+          // Update compact text
+          if (statusBadge) {
+            if (scrollY < 120) {
+              statusBadge.textContent = 'Available for Projects';
+            } else {
+              statusBadge.textContent = activeItem.badge;
+            }
+          }
+
+          // Update expanded context label
+          if (contextLabel) {
+            contextLabel.textContent = 'Membaca: ' + activeItem.name;
+          }
+
+          // Update WhatsApp URL and Subtitle
+          const waUrl = 'https://wa.me/6281273934336?text=' + encodeURIComponent(activeItem.waMessage);
+          if (waBtn) {
+            waBtn.href = waUrl;
+          }
+          if (waSubtitle) {
+            waSubtitle.textContent = activeItem.waSubtitle;
+          }
+          if (waFloatBtn) {
+            waFloatBtn.href = waUrl;
+          }
+        }
+      }
+
+      window.addEventListener('scroll', onScrollUpdate, { passive: true });
+      onScrollUpdate();
+
+      // 4. Copy Email Action with 2-Second Notification
+      let copyTimeout = null;
+      if (copyEmailBtn) {
+        copyEmailBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          const email = 'raihanpasha7500@gmail.com';
+
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(email).catch(function () { fallbackCopy(email); });
+          } else {
+            fallbackCopy(email);
+          }
+
+          // Show copied state
+          copyEmailBtn.classList.add('is-copied');
+          if (emailTitle) emailTitle.textContent = 'Email Copied!';
+          if (emailSubtitle) emailSubtitle.textContent = 'Tersalin ke clipboard';
+          if (emailIcon) {
+            emailIcon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#152B26" stroke-width="2.6"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+          }
+
+          if (copyTimeout) clearTimeout(copyTimeout);
+          copyTimeout = setTimeout(function () {
+            copyEmailBtn.classList.remove('is-copied');
+            if (emailTitle) emailTitle.textContent = 'Copy Email';
+            if (emailSubtitle) emailSubtitle.textContent = 'raihanpasha7500@...';
+            if (emailIcon) {
+              emailIcon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>';
+            }
+          }, 2000);
+        });
+      }
+
+      function fallbackCopy(text) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        try {
+          document.execCommand('copy');
+        } catch (err) {}
+        document.body.removeChild(ta);
+      }
+    })();
+  </script>
 
 
 
@@ -4981,4 +5723,252 @@
   </script>
 
 </body>
-</html>
+</html>      <!-- Category Filter Bar for Certificates -->
+      <div class="cert-filter-bar reveal">
+        <button class="cert-filter-pill active" onclick="filterCerts('all')">Semua Dokumen (12)</button>
+        <button class="cert-filter-pill" onclick="filterCerts('tik')">TIK & Digital (6)</button>
+        <button class="cert-filter-pill" onclick="filterCerts('bisnis')">Bisnis & Manajemen (5)</button>
+        <button class="cert-filter-pill" onclick="filterCerts('akademik')">Predikat Akademik (1)</button>
+      </div>
+
+      <!-- Executive Credential Split-Stage Deck Console -->
+      <div class="cert-deck-container reveal">
+        <!-- Left Pane: Interactive Document Selector List -->
+        <div class="cert-list-pane" id="certListPane">
+
+          <!-- 01: Kemnaker & GNIK - Integrity at Work -->
+          <div class="cert-row-item active" data-cert="kemnaker-integrity" data-category="tik" onclick="selectCert('kemnaker-integrity')" ondblclick="openCertModal('kemnaker-integrity')" title="Klik untuk pratinjau langsung, klik ganda untuk rincian penuh">
+            <span class="cert-row-num">01</span>
+            <div class="cert-row-main">
+              <div class="cert-row-meta">
+                <span class="cert-row-issuer">GNIK × KEMNAKER RI • 2026</span>
+                <span class="cert-row-pill">TIK & Etika</span>
+              </div>
+              <h4 class="cert-row-title">Essential Skills: Integrity at Work</h4>
+            </div>
+            <div class="cert-row-action" onclick="event.stopPropagation(); openCertModal('kemnaker-integrity');" title="Buka Rincian & Sertifikat Penuh">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </div>
+          </div>
+
+          <!-- 02: Kemnaker & GNIK - Digital Literacy -->
+          <div class="cert-row-item" data-cert="kemnaker-digital" data-category="tik" onclick="selectCert('kemnaker-digital')" ondblclick="openCertModal('kemnaker-digital')" title="Klik untuk pratinjau langsung, klik ganda untuk rincian penuh">
+            <span class="cert-row-num">02</span>
+            <div class="cert-row-main">
+              <div class="cert-row-meta">
+                <span class="cert-row-issuer">GNIK × KEMNAKER RI • 2026-2027</span>
+                <span class="cert-row-pill">Literasi Digital</span>
+              </div>
+              <h4 class="cert-row-title">Essential Skills: Digital Literacy</h4>
+            </div>
+            <div class="cert-row-action" onclick="event.stopPropagation(); openCertModal('kemnaker-digital');" title="Buka Rincian & Sertifikat Penuh">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </div>
+          </div>
+
+          <!-- 03: Kemnaker & GNIK - Adaptability -->
+          <div class="cert-row-item" data-cert="kemnaker-adaptability" data-category="tik" onclick="selectCert('kemnaker-adaptability')" ondblclick="openCertModal('kemnaker-adaptability')" title="Klik untuk pratinjau langsung, klik ganda untuk rincian penuh">
+            <span class="cert-row-num">03</span>
+            <div class="cert-row-main">
+              <div class="cert-row-meta">
+                <span class="cert-row-issuer">GNIK × KEMNAKER RI • 2026</span>
+                <span class="cert-row-pill">TIK & Agile</span>
+              </div>
+              <h4 class="cert-row-title">Essential Skills: Adaptability</h4>
+            </div>
+            <div class="cert-row-action" onclick="event.stopPropagation(); openCertModal('kemnaker-adaptability');" title="Buka Rincian & Sertifikat Penuh">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </div>
+          </div>
+
+          <!-- 04: Kemnaker & GNIK - Self Efficacy -->
+          <div class="cert-row-item" data-cert="kemnaker-self-efficacy" data-category="bisnis" onclick="selectCert('kemnaker-self-efficacy')" ondblclick="openCertModal('kemnaker-self-efficacy')" title="Klik untuk pratinjau langsung, klik ganda untuk rincian penuh">
+            <span class="cert-row-num">04</span>
+            <div class="cert-row-main">
+              <div class="cert-row-meta">
+                <span class="cert-row-issuer">GNIK × KEMNAKER RI • 2026-2027</span>
+                <span class="cert-row-pill">Bisnis & Kinerja</span>
+              </div>
+              <h4 class="cert-row-title">Essential Skills: Self Efficacy</h4>
+            </div>
+            <div class="cert-row-action" onclick="event.stopPropagation(); openCertModal('kemnaker-self-efficacy');" title="Buka Rincian & Sertifikat Penuh">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </div>
+          </div>
+
+          <!-- 05: Kemnaker & GNIK - Emotional Intelligence -->
+          <div class="cert-row-item" data-cert="kemnaker-emotional" data-category="bisnis" onclick="selectCert('kemnaker-emotional')" ondblclick="openCertModal('kemnaker-emotional')" title="Klik untuk pratinjau langsung, klik ganda untuk rincian penuh">
+            <span class="cert-row-num">05</span>
+            <div class="cert-row-main">
+              <div class="cert-row-meta">
+                <span class="cert-row-issuer">GNIK × KEMNAKER RI • 2026-2027</span>
+                <span class="cert-row-pill">Komunikasi & EQ</span>
+              </div>
+              <h4 class="cert-row-title">Essential Skills: Emotional Intelligence</h4>
+            </div>
+            <div class="cert-row-action" onclick="event.stopPropagation(); openCertModal('kemnaker-emotional');" title="Buka Rincian & Sertifikat Penuh">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </div>
+          </div>
+
+          <!-- 06: Talenesia Excel -->
+          <div class="cert-row-item" data-cert="talenesia-excel" data-category="bisnis" onclick="selectCert('talenesia-excel')" ondblclick="openCertModal('talenesia-excel')" title="Klik untuk pratinjau langsung, klik ganda untuk rincian penuh">
+            <span class="cert-row-num">06</span>
+            <div class="cert-row-main">
+              <div class="cert-row-meta">
+                <span class="cert-row-issuer">TALENESIA • AGUSTUS 2026</span>
+                <span class="cert-row-pill">Keuangan & Excel</span>
+              </div>
+              <h4 class="cert-row-title">Pelatihan Admin Keuangan: Excel Lanjutan</h4>
+            </div>
+            <div class="cert-row-action" onclick="event.stopPropagation(); openCertModal('talenesia-excel');" title="Buka Rincian & Sertifikat Penuh">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </div>
+          </div>
+
+          <!-- 07: Institute AI -->
+          <div class="cert-row-item" data-cert="ias-ai" data-category="tik" onclick="selectCert('ias-ai')" ondblclick="openCertModal('ias-ai')" title="Klik untuk pratinjau langsung, klik ganda untuk rincian penuh">
+            <span class="cert-row-num">07</span>
+            <div class="cert-row-main">
+              <div class="cert-row-meta">
+                <span class="cert-row-issuer">INSTITUTE ADVANCED SCIENCES • 2026</span>
+                <span class="cert-row-pill">Artificial Intelligence</span>
+              </div>
+              <h4 class="cert-row-title">Webinar AI & Karya Ilmiah: Kawan / Lawan?</h4>
+            </div>
+            <div class="cert-row-action" onclick="event.stopPropagation(); openCertModal('ias-ai');" title="Buka Rincian & Sertifikat Penuh">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </div>
+          </div>
+
+          <!-- 08: BPS Bangka Magang -->
+          <div class="cert-row-item" data-cert="bps-magang" data-category="tik" onclick="selectCert('bps-magang')" ondblclick="openCertModal('bps-magang')" title="Klik untuk pratinjau langsung, klik ganda untuk rincian penuh">
+            <span class="cert-row-num">08</span>
+            <div class="cert-row-main">
+              <div class="cert-row-meta">
+                <span class="cert-row-issuer">BPS KABUPATEN BANGKA • 2026</span>
+                <span class="cert-row-pill">Magang TIK</span>
+              </div>
+              <h4 class="cert-row-title">Sertifikat Magang BPS Kabupaten Bangka</h4>
+            </div>
+            <div class="cert-row-action" onclick="event.stopPropagation(); openCertModal('bps-magang');" title="Buka Rincian & Sertifikat Penuh">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </div>
+          </div>
+
+          <!-- 09: Poltekkes Kewirausahaan -->
+          <div class="cert-row-item" data-cert="poltekkes-ukm" data-category="bisnis" onclick="selectCert('poltekkes-ukm')" ondblclick="openCertModal('poltekkes-ukm')" title="Klik untuk pratinjau langsung, klik ganda untuk rincian penuh">
+            <span class="cert-row-num">09</span>
+            <div class="cert-row-main">
+              <div class="cert-row-meta">
+                <span class="cert-row-issuer">POLTEKKES DENPASAR • SEPT 2025</span>
+                <span class="cert-row-pill">Wirausaha UKM</span>
+              </div>
+              <h4 class="cert-row-title">Webinar Nasional UKM: Wirausaha Mandiri</h4>
+            </div>
+            <div class="cert-row-action" onclick="event.stopPropagation(); openCertModal('poltekkes-ukm');" title="Buka Rincian & Sertifikat Penuh">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </div>
+          </div>
+
+          <!-- 10: Polman Panitia Matematika -->
+          <div class="cert-row-item" data-cert="polman-panitia" data-category="bisnis" onclick="selectCert('polman-panitia')" ondblclick="openCertModal('polman-panitia')" title="Klik untuk pratinjau langsung, klik ganda untuk rincian penuh">
+            <span class="cert-row-num">10</span>
+            <div class="cert-row-main">
+              <div class="cert-row-meta">
+                <span class="cert-row-issuer">POLMAN BABEL • JUNI 2023</span>
+                <span class="cert-row-pill">Kepanitiaan</span>
+              </div>
+              <h4 class="cert-row-title">Panitia Lomba Nalaria Matematika Student-E</h4>
+            </div>
+            <div class="cert-row-action" onclick="event.stopPropagation(); openCertModal('polman-panitia');" title="Buka Rincian & Sertifikat Penuh">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </div>
+          </div>
+
+          <!-- 11: Polman Magang Hungaria -->
+          <div class="cert-row-item" data-cert="polman-hungaria" data-category="tik" onclick="selectCert('polman-hungaria')" ondblclick="openCertModal('polman-hungaria')" title="Klik untuk pratinjau langsung, klik ganda untuk rincian penuh">
+            <span class="cert-row-num">11</span>
+            <div class="cert-row-main">
+              <div class="cert-row-meta">
+                <span class="cert-row-issuer">POLMAN BABEL • MARET 2023</span>
+                <span class="cert-row-pill">Magang Global</span>
+              </div>
+              <h4 class="cert-row-title">Webinar: Program Magang di Hungaria</h4>
+            </div>
+            <div class="cert-row-action" onclick="event.stopPropagation(); openCertModal('polman-hungaria');" title="Buka Rincian & Sertifikat Penuh">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </div>
+          </div>
+
+          <!-- 12: Polman Babel Cumlaude -->
+          <div class="cert-row-item" data-cert="polman-cumlaude" data-category="akademik" onclick="selectCert('polman-cumlaude')" ondblclick="openCertModal('polman-cumlaude')" title="Klik untuk pratinjau langsung, klik ganda untuk rincian penuh">
+            <span class="cert-row-num">12</span>
+            <div class="cert-row-main">
+              <div class="cert-row-meta">
+                <span class="cert-row-issuer" style="color:#B4823D;">POLMAN NEGERI BABEL • 2026</span>
+                <span class="cert-row-pill" style="color:#B4823D; border-color:rgba(180,130,61,0.4); font-weight:800;">CUMLAUDE ★</span>
+              </div>
+              <h4 class="cert-row-title" style="color:#25422A;">Piagam Predikat Kelulusan Dengan Pujian</h4>
+            </div>
+            <div class="cert-row-action" onclick="event.stopPropagation(); openCertModal('polman-cumlaude');" title="Buka Rincian & Piagam Penuh">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Pane: Live Document Preview Stage (Compact) -->
+        <div class="cert-preview-pane">
+          <!-- =======================================================================
+               GANTI URL FOTO SERTIFIKAT DI SINI:
+               - GNIK Integrity at Work: sertifikat-integrity.jpg
+               - GNIK Digital Literacy: sertifikat-digital-literacy.jpg
+               - GNIK Adaptability: sertifikat-adaptability.jpg
+               - GNIK Self Efficacy: sertifikat-self-efficacy.jpg
+               - GNIK Emotional Intelligence: sertifikat-emotional-intelligence.jpg
+               - Pelatihan Excel Talenesia: sertifikat-excel.jpg
+               - Webinar AI: sertifikat-ai.jpg
+               - Magang BPS Bangka: sertifikat-magang-bps.jpg
+               - Webinar UKM Poltekkes: sertifikat-wirausaha.jpg
+               - Panitia Lomba Matematika: sertifikat-panitia-matematika.jpg
+               - Webinar Magang Hungaria: sertifikat-magang-hungaria.jpg
+               - Piagam Kelulusan Cumlaude: sertifikat-cumlaude.jpg
+          ======================================================================== -->
+          <div class="cert-live-frame" id="certLiveFrame" onclick="openCertModal(currentSelectedCert)" title="Klik untuk memperbesar dokumen dan membaca rincian lengkap">
+            <img id="certStageImg" class="cert-live-img" src="sertifikat-integrity.jpg" alt="Pratinjau Sertifikat Resmi" onerror="this.style.display='none'; document.getElementById('certStageFallback').style.display='flex';" loading="lazy">
+            <div class="cert-stage-fallback" id="certStageFallback">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span id="certFbIssuer" style="font-family:'JetBrains Mono',monospace; font-size:9.5px; font-weight:700; color:var(--ink-soft); letter-spacing:0.04em;">GNIK × KEMNAKER RI</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#B4823D"><path d="M12 2l2.4 5.2 5.6.8-4 4 1 5.6-5-2.8-5 2.8 1-5.6-4-4 5.6-.8z"/></svg>
+              </div>
+              <div style="margin:4px 0;">
+                <div style="font-family:'JetBrains Mono',monospace; font-size:8.5px; color:var(--ink-faint); text-transform:uppercase;">Kredensial Terverifikasi</div>
+                <div id="certFbName" style="font-family:'Fraunces',serif; font-size:14px; font-weight:600; color:var(--accent-deep); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Essential Skills: Integrity at Work</div>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(219,221,203,0.6); padding-top:4px; font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--ink-faint);">
+                <span>Penerima: M. Raihan Pasha</span>
+                <span style="color:var(--accent); font-weight:700;">✓ Terverifikasi Resmi</span>
+              </div>
+            </div>
+            <div class="cert-stage-overlay">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              <span>Perbesar & Rincian Lengkap</span>
+            </div>
+          </div>
+
+          <!-- Stage Bottom Status & Trigger -->
+          <div class="cert-stage-footer">
+            <div class="cert-stage-info">
+              <div class="cert-stage-badge" id="certStageBadge">GNIK × KEMNAKER RI • OKTOBER 2026</div>
+              <div class="cert-stage-issuer" id="certStageIssuer">Gerakan Nasional Indonesia Kompeten × Kemnaker RI</div>
+            </div>
+            <button class="cert-stage-btn" onclick="openCertModal(currentSelectedCert)" title="Buka rincian kompetensi dan pratinjau penuh">
+              <span>Buka Dokumen</span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      
